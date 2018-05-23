@@ -16,7 +16,7 @@ public class UserType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @Column(name = "name", length = 256, nullable = false)
     private String name;
@@ -31,11 +31,11 @@ public class UserType {
     @JoinColumn(name = "createdby")
     private User createdBy;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

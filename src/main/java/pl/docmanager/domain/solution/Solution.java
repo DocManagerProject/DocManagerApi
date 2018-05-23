@@ -1,6 +1,5 @@
 package pl.docmanager.domain.solution;
 
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -16,7 +15,7 @@ public class Solution {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @Column(name = "name", length = 1024, nullable = false)
     private String name;
@@ -28,11 +27,11 @@ public class Solution {
     @Column(name = "state", nullable = false)
     private SolutionState state;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
