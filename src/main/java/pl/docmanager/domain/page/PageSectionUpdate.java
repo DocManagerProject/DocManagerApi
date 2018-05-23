@@ -21,17 +21,17 @@ public class PageSectionUpdate {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "pagesectionid")
+    @JoinColumn(name = "pagesectionid", nullable = false)
     private PageSection pageSection;
 
     @ManyToOne
-    @JoinColumn(name = "authorid")
+    @JoinColumn(name = "authorid", nullable = false)
     private User author;
 
-    @Column(name = "updatedate")
+    @Column(name = "updatedate", nullable = false)
     private LocalDateTime updateDate;
 
-    @Column(name = "snapshot")
+    @Column(name = "snapshot", nullable = false)
     private String snapshot;
 
     public long getId() {

@@ -21,17 +21,17 @@ public class PageUpdate {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "pageid")
+    @JoinColumn(name = "pageid", nullable = false)
     private Page page;
 
     @ManyToOne
-    @JoinColumn(name = "authorid")
+    @JoinColumn(name = "authorid", nullable = false)
     private User author;
 
-    @Column(name = "updatedate")
+    @Column(name = "updatedate", nullable = false)
     private LocalDateTime updateDate;
 
-    @Column(name = "snapshot")
+    @Column(name = "snapshot", nullable = false)
     private String snapshot;
 
     public long getId() {

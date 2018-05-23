@@ -19,23 +19,23 @@ public class PageSection {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "pageid")
+    @JoinColumn(name = "pageid", nullable = false)
     private Page page;
 
-    @Column(name = "name")
+    @Column(name = "name", length = 1024, nullable = false)
     private String name;
 
-    @Column(name = "content")
+    @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "index")
+    @Column(name = "index", nullable = false)
     private int index;
 
-    @Column(name = "url")
+    @Column(name = "url", length = 256, nullable = false)
     private String url;
 
     @Enumerated
-    @Column(name = "state")
+    @Column(name = "state", nullable = false)
     private PageSectionState state;
 
     public long getId() {

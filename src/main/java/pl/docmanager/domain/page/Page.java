@@ -23,24 +23,24 @@ public class Page {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "solutionid")
+    @JoinColumn(name = "solutionid", nullable = false)
     private Solution solution;
 
     @ManyToOne
-    @JoinColumn(name = "authorid")
+    @JoinColumn(name = "authorid", nullable = false)
     private User author;
 
-    @Column(name = "name")
+    @Column(name = "name", length = 256, nullable = false)
     private String name;
 
-    @Column(name = "createdate")
+    @Column(name = "createdate", nullable = false)
     private LocalDateTime createDate;
 
-    @Column(name = "url")
+    @Column(name = "url", length = 256, nullable = false)
     private String url;
 
     @Enumerated
-    @Column(name = "state")
+    @Column(name = "state", nullable = false)
     private PageState state;
 
     public long getId() {
