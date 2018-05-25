@@ -23,7 +23,7 @@ public class ApiAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private static final Logger log = LogManager.getLogger(ApiAuthenticationFilter.class);
     private AuthenticationManager authenticationManager;
 
-    public static final String TEMPORARY_SECRET = "secret";
+    public static final String TEMPORARY_SECRET = "SecretKeyToGenJWTs";
 
     public ApiAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -45,13 +45,15 @@ public class ApiAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         return null;
     }
 
+    @Override
     public void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                          FilterChain chain, Authentication authResult) {
         String apiToken = Jwts.builder()
                 .setSubject(((User) authResult.getPrincipal()).getUsername())
-                .setExpiration(new Date(System.currentTimeMillis() + 10000))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000000))
                 .signWith(SignatureAlgorithm.HS512, TEMPORARY_SECRET.getBytes())
                 .compact();
         response.addHeader("apiToken", apiToken);
+        System.out.println("generated token: " + apiToken);
     }
 }

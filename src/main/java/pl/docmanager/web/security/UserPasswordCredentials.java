@@ -4,6 +4,9 @@ public class UserPasswordCredentials {
     private String username;
     private String password;
 
+    public UserPasswordCredentials() {
+    }
+
     public UserPasswordCredentials(String username, String password) {
         this.username = username;
         this.password = password;
@@ -20,6 +23,7 @@ public class UserPasswordCredentials {
     public String getPassword() {
         return password;
     }
+
     public void setPassword(String password) {
         this.password = password;
     }
