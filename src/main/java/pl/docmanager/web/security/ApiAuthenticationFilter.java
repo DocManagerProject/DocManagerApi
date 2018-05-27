@@ -38,7 +38,7 @@ public class ApiAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            credentials.getUsername(), credentials.getPassword()));
+                            credentials.getEmail(), credentials.getPassword()));
         } catch (IOException e) {
             log.error("Error while authenticating user", e);
         }
