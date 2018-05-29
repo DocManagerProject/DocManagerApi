@@ -54,6 +54,5 @@ public class ApiAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .signWith(SignatureAlgorithm.HS512, TEMPORARY_SECRET.getBytes())
                 .compact();
         response.addHeader("apiToken", apiToken);
-        System.out.println("generated token: " + apiToken);
     }
 }
