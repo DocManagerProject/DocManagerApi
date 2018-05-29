@@ -25,7 +25,11 @@ public class ApiTokenDecoder {
             throw new IllegalArgumentException("apiToken cannot be null");
         }
 
-        String email = Jwts.parser().parseClaimsJws(apiToken).getBody().getSubject();
+        String email = Jwts.parser()
+                .setSigningKey(ApiAuthenticationFilter.TEMPORARY_SECRET.getBytes())
+                .parseClaimsJws(apiToken)
+                .getBody()
+                .getSubject();
         Optional<User> optUser = userRepository.findByEmail(email);
 
         if (!optUser.isPresent()) {
