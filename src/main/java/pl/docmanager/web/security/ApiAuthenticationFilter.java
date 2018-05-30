@@ -51,7 +51,7 @@ public class ApiAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String apiToken = Jwts.builder()
                 .setSubject(userDetails.getUsername())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000000))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000000000))
                 .signWith(SignatureAlgorithm.HS512, TEMPORARY_SECRET.getBytes())
                 .compact();
         response.addHeader("apiToken", apiToken);
