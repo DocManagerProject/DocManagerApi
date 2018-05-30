@@ -11,8 +11,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "page")
@@ -42,6 +45,10 @@ public class Page {
     @Enumerated
     @Column(name = "state", nullable = false)
     private PageState state;
+
+    @OneToMany
+    @OrderBy("index desc")
+    private List<PageSection> sections;
 
     public long getId() {
         return id;
@@ -97,5 +104,13 @@ public class Page {
 
     public void setState(PageState state) {
         this.state = state;
+    }
+
+    public List<PageSection> getSections() {
+        return sections;
+    }
+
+    public void setSections(List<PageSection> sections) {
+        this.sections = sections;
     }
 }
