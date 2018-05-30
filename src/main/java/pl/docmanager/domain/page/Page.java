@@ -6,6 +6,7 @@ import pl.docmanager.domain.user.User;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -46,7 +47,7 @@ public class Page {
     @Column(name = "state", nullable = false)
     private PageState state;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "page")
     @OrderBy("index desc")
     private List<PageSection> sections;
 
