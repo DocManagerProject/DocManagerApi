@@ -9,7 +9,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -48,11 +47,14 @@ public class ApiAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                          FilterChain chain, Authentication authResult) {
+        EnchancedUserDetails userDetails = (EnchancedUserDetails) authResult.getPrincipal();
+
         String apiToken = Jwts.builder()
-                .setSubject(((User) authResult.getPrincipal()).getUsername())
+                .setSubject(userDetails.getUsername())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000000))
                 .signWith(SignatureAlgorithm.HS512, TEMPORARY_SECRET.getBytes())
                 .compact();
         response.addHeader("apiToken", apiToken);
+        response.addHeader("solutionId", userDetails.getSolutionId() + "");
     }
 }

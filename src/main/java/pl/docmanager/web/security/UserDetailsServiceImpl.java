@@ -29,6 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException(username);
         }
         User user = optUser.get();
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());
+        return new EnchancedUserDetails(user.getEmail(), user.getPassword(), user.getSolution().getId(),
+                new ArrayList<>());
     }
 }
