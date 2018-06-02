@@ -1,6 +1,7 @@
 package pl.docmanager.web.security;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,13 +32,17 @@ public class ApiAuthorizationFilter extends BasicAuthenticationFilter {
             return;
         }
 
-        String user = Jwts.parser()
-                .setSigningKey(ApiAuthenticationFilter.TEMPORARY_SECRET.getBytes())
-                .parseClaimsJws(apiToken)
-                .getBody()
-                .getSubject();
-
-        Authentication auth = user == null ? null : new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+        Authentication auth;
+        try {
+            String user = Jwts.parser()
+                    .setSigningKey(ApiAuthenticationFilter.TEMPORARY_SECRET.getBytes())
+                    .parseClaimsJws(apiToken)
+                    .getBody()
+                    .getSubject();
+            auth = user == null ? null : new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+        } catch (SignatureException e) {
+            auth = null;
+        }
         SecurityContextHolder.getContext().setAuthentication(auth);
         chain.doFilter(request, response);
     }
