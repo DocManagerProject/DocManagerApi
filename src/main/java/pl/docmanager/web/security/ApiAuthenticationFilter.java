@@ -49,11 +49,7 @@ public class ApiAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                          FilterChain chain, Authentication authResult) {
         EnchancedUserDetails userDetails = (EnchancedUserDetails) authResult.getPrincipal();
 
-        String apiToken = Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000000000))
-                .signWith(SignatureAlgorithm.HS512, TEMPORARY_SECRET.getBytes())
-                .compact();
+        String apiToken = JwtTokenGenerator.generateToken(userDetails.getUsername(), TEMPORARY_SECRET);
         response.addHeader("apiToken", apiToken);
         response.addHeader("solutionId", userDetails.getSolutionId() + "");
     }
