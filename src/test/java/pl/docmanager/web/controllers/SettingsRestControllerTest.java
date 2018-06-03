@@ -80,7 +80,7 @@ public class SettingsRestControllerTest extends RestControllerTestBase {
 
     @Test
     public void getSettingsBySolutionAndNameTestWrongApiToken() throws Exception {
-        String invalidToken = JwtTokenGenerator.generateToken("user@example.com", "invalidSecret");
+        String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret");
         mvc.perform(get("/api/settings/solution/1/name/test")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("apiToken", invalidToken))
