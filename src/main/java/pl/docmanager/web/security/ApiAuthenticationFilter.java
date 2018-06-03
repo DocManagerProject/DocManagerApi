@@ -1,8 +1,6 @@
 package pl.docmanager.web.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,14 +13,11 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 
 public class ApiAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private static final Logger log = LogManager.getLogger(ApiAuthenticationFilter.class);
     private AuthenticationManager authenticationManager;
-
-    public static final String TEMPORARY_SECRET = "SecretKeyToGenJWTs";
 
     public ApiAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -49,7 +44,7 @@ public class ApiAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                          FilterChain chain, Authentication authResult) {
         EnchancedUserDetails userDetails = (EnchancedUserDetails) authResult.getPrincipal();
 
-        String apiToken = JwtTokenGenerator.generateToken(userDetails.getUsername(), TEMPORARY_SECRET);
+        String apiToken = JwtTokenGenerator.generateToken(userDetails.getUsername(), SecretKeeper.getSecret());
         response.addHeader("apiToken", apiToken);
         response.addHeader("solutionId", userDetails.getSolutionId() + "");
     }

@@ -35,7 +35,7 @@ public class ApiAuthorizationFilter extends BasicAuthenticationFilter {
         Authentication auth;
         try {
             String user = Jwts.parser()
-                    .setSigningKey(ApiAuthenticationFilter.TEMPORARY_SECRET.getBytes())
+                    .setSigningKey(SecretKeeper.getSecret())
                     .parseClaimsJws(apiToken)
                     .getBody()
                     .getSubject();

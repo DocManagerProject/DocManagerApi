@@ -14,9 +14,9 @@ import pl.docmanager.domain.solution.Solution;
 import pl.docmanager.domain.user.User;
 import pl.docmanager.domain.user.UserState;
 import pl.docmanager.web.security.AccessValidator;
-import pl.docmanager.web.security.ApiAuthenticationFilter;
 import pl.docmanager.web.security.ApiTokenDecoder;
 import pl.docmanager.web.security.JwtTokenGenerator;
+import pl.docmanager.web.security.SecretKeeper;
 import pl.docmanager.web.security.WebSecurity;
 
 import java.util.Optional;
@@ -56,6 +56,6 @@ public abstract class RestControllerTestBase {
         given(userRepository.findByEmail(USER_EMAIL)).willReturn(Optional.of(user));
 
         validToken = JwtTokenGenerator.generateToken(USER_EMAIL,
-                ApiAuthenticationFilter.TEMPORARY_SECRET);
+                SecretKeeper.getSecret());
     }
 }
