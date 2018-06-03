@@ -25,7 +25,7 @@ import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {Application.class, WebSecurity.class})
-public class RestControllerTestBase {
+public abstract class RestControllerTestBase {
 
     @MockBean
     protected UserRepository userRepository;
