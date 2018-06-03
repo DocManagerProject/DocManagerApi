@@ -56,6 +56,6 @@ public abstract class RestControllerTestBase {
         given(userRepository.findByEmail(USER_EMAIL)).willReturn(Optional.of(user));
 
         validToken = JwtTokenGenerator.generateToken(USER_EMAIL,
-                SecretKeeper.getSecret());
+                SecretKeeper.getInstance().getSecret());
     }
 }

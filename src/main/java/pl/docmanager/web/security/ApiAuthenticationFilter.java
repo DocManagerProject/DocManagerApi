@@ -44,7 +44,7 @@ public class ApiAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                          FilterChain chain, Authentication authResult) {
         EnchancedUserDetails userDetails = (EnchancedUserDetails) authResult.getPrincipal();
 
-        String apiToken = JwtTokenGenerator.generateToken(userDetails.getUsername(), SecretKeeper.getSecret());
+        String apiToken = JwtTokenGenerator.generateToken(userDetails.getUsername(), SecretKeeper.getInstance().getSecret());
         response.addHeader("apiToken", apiToken);
         response.addHeader("solutionId", userDetails.getSolutionId() + "");
     }

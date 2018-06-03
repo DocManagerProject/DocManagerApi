@@ -26,7 +26,7 @@ public class ApiTokenDecoder {
         }
 
         String email = Jwts.parser()
-                .setSigningKey(SecretKeeper.getSecret())
+                .setSigningKey(SecretKeeper.getInstance().getSecret())
                 .parseClaimsJws(apiToken)
                 .getBody()
                 .getSubject();
