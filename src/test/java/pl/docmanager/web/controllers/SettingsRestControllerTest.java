@@ -100,6 +100,6 @@ public class SettingsRestControllerTest extends RestControllerTestBase {
         mvc.perform(get("/api/settings/solution/2/name/test")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("apiToken", validToken))
-                .andExpect(status().is(HttpStatus.UNAUTHORIZED.value()));
+                .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
 }

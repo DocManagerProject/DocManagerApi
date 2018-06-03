@@ -115,6 +115,6 @@ public class PageRestControllerTest extends RestControllerTestBase {
         mvc.perform(get("/api/pages/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("apiToken", validToken))
-                .andExpect(status().is(HttpStatus.UNAUTHORIZED.value()));
+                .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
 }

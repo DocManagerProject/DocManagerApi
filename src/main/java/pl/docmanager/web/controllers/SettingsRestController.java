@@ -51,14 +51,8 @@ public class SettingsRestController {
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NoSuchElementException.class)
-    public String return404(NoSuchElementException e) {
-        return e.getMessage();
-    }
-
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(AccessValidationException.class)
-    public String return401(AccessValidationException e) {
+    @ExceptionHandler({NoSuchElementException.class, AccessValidationException.class})
+    public String return404(Exception e) {
         return e.getMessage();
     }
 }
