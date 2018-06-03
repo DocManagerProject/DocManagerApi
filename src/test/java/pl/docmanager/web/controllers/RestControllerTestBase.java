@@ -39,7 +39,7 @@ public class RestControllerTestBase {
 
     protected String validToken;
 
-    private static final String USER_EMAIL = "user@example.com";
+    protected static final String USER_EMAIL = "user@example.com";
 
     @Before
     public void setup() {
