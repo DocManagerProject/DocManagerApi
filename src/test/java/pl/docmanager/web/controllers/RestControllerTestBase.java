@@ -19,6 +19,7 @@ import pl.docmanager.web.security.JwtTokenGenerator;
 import pl.docmanager.web.security.SecretKeeper;
 import pl.docmanager.web.security.WebSecurity;
 
+import java.util.Date;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
@@ -56,6 +57,6 @@ public abstract class RestControllerTestBase {
         given(userRepository.findByEmail(USER_EMAIL)).willReturn(Optional.of(user));
 
         validToken = JwtTokenGenerator.generateToken(USER_EMAIL,
-                SecretKeeper.getInstance().getSecret());
+                SecretKeeper.getInstance().getSecret(), new Date(System.currentTimeMillis() + 1000000000));
     }
 }

@@ -13,6 +13,7 @@ import pl.docmanager.domain.global.Settings;
 import pl.docmanager.domain.solution.Solution;
 import pl.docmanager.web.security.JwtTokenGenerator;
 
+import java.util.Date;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
@@ -80,7 +81,7 @@ public class SettingsRestControllerTest extends RestControllerTestBase {
 
     @Test
     public void getSettingsBySolutionAndNameTestWrongApiToken() throws Exception {
-        String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret");
+        String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret", new Date(System.currentTimeMillis() + 1000000000));
         mvc.perform(get("/api/settings/solution/1/name/test")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("apiToken", invalidToken))

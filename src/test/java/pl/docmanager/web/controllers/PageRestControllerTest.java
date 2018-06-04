@@ -17,6 +17,7 @@ import pl.docmanager.web.security.JwtTokenGenerator;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
@@ -95,7 +96,7 @@ public class PageRestControllerTest extends RestControllerTestBase {
 
     @Test
     public void getPageByIdTestWrongApiToken() throws Exception {
-        String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret");
+        String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret", new Date(System.currentTimeMillis() + 1000000000));
         mvc.perform(get("/api/pages/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("apiToken", invalidToken))

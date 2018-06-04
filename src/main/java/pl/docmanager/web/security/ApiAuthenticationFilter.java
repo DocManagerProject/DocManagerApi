@@ -13,6 +13,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 
 public class ApiAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -44,7 +45,9 @@ public class ApiAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                          FilterChain chain, Authentication authResult) {
         EnchancedUserDetails userDetails = (EnchancedUserDetails) authResult.getPrincipal();
 
-        String apiToken = JwtTokenGenerator.generateToken(userDetails.getUsername(), SecretKeeper.getInstance().getSecret());
+        String apiToken = JwtTokenGenerator.generateToken(userDetails.getUsername(),
+                SecretKeeper.getInstance().getSecret(),
+                new Date(System.currentTimeMillis() + 1000000000));
         response.addHeader("apiToken", apiToken);
         response.addHeader("solutionId", userDetails.getSolutionId() + "");
     }

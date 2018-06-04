@@ -13,6 +13,7 @@ import pl.docmanager.domain.solution.Solution;
 import pl.docmanager.domain.user.User;
 import pl.docmanager.domain.user.UserState;
 
+import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -58,7 +59,8 @@ public class ApiTokenDecoderTest {
 
     @Test
     public void getUseFromApiTokenTestValid() {
-        String apiToken = JwtTokenGenerator.generateToken(USER_EMAIL, SecretKeeper.getInstance().getSecret());
+        String apiToken = JwtTokenGenerator.generateToken(USER_EMAIL, SecretKeeper.getInstance().getSecret(),
+                new Date(System.currentTimeMillis() + 1000000000));
         Solution solution = new Solution();
         solution.setId(1);
         User user = new User();
@@ -72,13 +74,16 @@ public class ApiTokenDecoderTest {
 
     @Test(expected = SignatureException.class)
     public void getUserFromApiTokenTestWrongSecret() {
-        String apiToken = JwtTokenGenerator.generateToken(USER_EMAIL, "WRONG_SECRET");
+        String apiToken = JwtTokenGenerator.generateToken(USER_EMAIL, "WRONG_SECRET",
+                new Date(System.currentTimeMillis() + 1000000000));
         apiTokenDecoder.getUseFromApiToken(apiToken);
     }
 
     @Test(expected = NoSuchElementException.class)
     public void getUserFromApiTokenTestNonExistingUserEmail() {
-        String apiToken = JwtTokenGenerator.generateToken("NonExisting@example.com", SecretKeeper.getInstance().getSecret());
+        String apiToken = JwtTokenGenerator.generateToken("NonExisting@example.com",
+                SecretKeeper.getInstance().getSecret(),
+                new Date(System.currentTimeMillis() + 1000000000));
         Solution solution = new Solution();
         solution.setId(1);
         User user = new User();
@@ -92,7 +97,9 @@ public class ApiTokenDecoderTest {
 
     @Test
     public void getUserFromApiTokenTestWrongUserEmail() {
-        String apiToken = JwtTokenGenerator.generateToken(WRONG_USER_EMAIL, SecretKeeper.getInstance().getSecret());
+        String apiToken = JwtTokenGenerator.generateToken(WRONG_USER_EMAIL,
+                SecretKeeper.getInstance().getSecret(),
+                new Date(System.currentTimeMillis() + 1000000000));
         Solution solution = new Solution();
         solution.setId(1);
         assertNotEquals(USER_EMAIL, apiTokenDecoder.getUseFromApiToken(apiToken).getEmail());

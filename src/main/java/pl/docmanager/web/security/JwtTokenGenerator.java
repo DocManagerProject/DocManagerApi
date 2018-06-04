@@ -7,10 +7,10 @@ import java.util.Date;
 
 public class JwtTokenGenerator {
 
-    public static String generateToken(String username, String secret) {
+    public static String generateToken(String username, String secret, Date expiration) {
        return Jwts.builder()
                .setSubject(username)
-               .setExpiration(new Date(System.currentTimeMillis() + 1000000000))
+               .setExpiration(expiration)
                .signWith(SignatureAlgorithm.HS512, secret.getBytes())
                .compact();
     }
