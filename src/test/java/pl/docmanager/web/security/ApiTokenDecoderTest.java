@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.given;
+import static pl.docmanager.web.UserProvider.getMockUser;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -34,27 +35,10 @@ public class ApiTokenDecoderTest {
 
     @Before
     public void setup() {
-        Solution solution = new Solution();
-        solution.setId(1);
-
-        User user = new User();
-        user.setId(1);
-        user.setSolution(solution);
-        user.setEmail(USER_EMAIL);
-        user.setState(UserState.ACTIVE);
-
-        given(userRepository.findByEmail(USER_EMAIL)).willReturn(Optional.of(user));
-
-        Solution anotherSolution = new Solution();
-        anotherSolution.setId(2);
-
-        User wrongUser = new User();
-        wrongUser.setId(2);
-        wrongUser.setSolution(anotherSolution);
-        wrongUser.setEmail(WRONG_USER_EMAIL);
-        wrongUser.setState(UserState.ACTIVE);
-
-        given(userRepository.findByEmail(WRONG_USER_EMAIL)).willReturn(Optional.of(wrongUser));
+        given(userRepository.findByEmail(USER_EMAIL))
+                .willReturn(Optional.of(getMockUser(1, 1, USER_EMAIL, UserState.ACTIVE)));
+        given(userRepository.findByEmail(WRONG_USER_EMAIL))
+                .willReturn(Optional.of(getMockUser(2, 2, WRONG_USER_EMAIL, UserState.ACTIVE)));
     }
 
     @Test
