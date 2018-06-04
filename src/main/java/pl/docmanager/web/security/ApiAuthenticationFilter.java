@@ -47,7 +47,7 @@ public class ApiAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String apiToken = JwtTokenGenerator.generateToken(userDetails.getUsername(),
                 SecretKeeper.getInstance().getSecret(),
-                new Date(System.currentTimeMillis() + 1000000000));
+                new Date(System.currentTimeMillis() + 2_678_400_000L)); //expire after 1 month
         response.addHeader("apiToken", apiToken);
         response.addHeader("solutionId", userDetails.getSolutionId() + "");
     }
