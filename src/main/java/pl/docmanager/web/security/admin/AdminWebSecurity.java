@@ -46,13 +46,4 @@ public class AdminWebSecurity extends WebSecurityConfigurerAdapter {
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
     }
-
-    @Bean
-    protected CorsConfigurationSource corsConfigurationSource() {
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
-        corsConfiguration.addExposedHeader("adminApiToken");
-        source.registerCorsConfiguration("/**", corsConfiguration);
-        return source;
-    }
 }
