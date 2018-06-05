@@ -33,8 +33,9 @@ public class AdminWebSecurity extends WebSecurityConfigurerAdapter {
         AdminApiAuthenticationFilter authenticationFilter = new AdminApiAuthenticationFilter(authenticationManager());
         authenticationFilter.setFilterProcessesUrl("/admin/api/login");
 
-        http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers("/admin/api/**").hasRole("admin")
+        http.cors().and().csrf().disable()
+                .antMatcher("/admin/api/**").authorizeRequests()
+                .anyRequest().hasRole("admin")
                 .and()
                 .addFilter(authenticationFilter)
                 .addFilter(new AdminApiAuthorizationFilter(authenticationManager()))
