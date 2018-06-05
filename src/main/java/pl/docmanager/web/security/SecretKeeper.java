@@ -15,4 +15,8 @@ public class SecretKeeper {
     public String getSecret() {
         return "SecretKeyToGenJWTs";
     }
+
+    public String getAdminSecret() {
+        return "SecretKeyToGenAdminJWTs";
+    }
 }

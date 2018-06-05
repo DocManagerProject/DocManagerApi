@@ -1,4 +1,4 @@
-package pl.docmanager.web.security;
+package pl.docmanager.web.security.admin;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -17,27 +17,27 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
 @Configuration
-@Order(2)
-public class WebSecurity extends WebSecurityConfigurerAdapter {
+@Order(1)
+public class AdminWebSecurity extends WebSecurityConfigurerAdapter {
 
     private UserDetailsService userDetailsService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public WebSecurity(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService) {
+    public AdminWebSecurity(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = new BCryptPasswordEncoder();
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        ApiAuthenticationFilter authenticationFilter = new ApiAuthenticationFilter(authenticationManager());
-        authenticationFilter.setFilterProcessesUrl("/api/login");
+        AdminApiAuthenticationFilter authenticationFilter = new AdminApiAuthenticationFilter(authenticationManager());
+        authenticationFilter.setFilterProcessesUrl("/admin/api/login");
 
         http.cors().and().csrf().disable().authorizeRequests()
-                .anyRequest().authenticated()
+                .antMatchers("/admin/api/**").hasRole("admin")
                 .and()
                 .addFilter(authenticationFilter)
-                .addFilter(new ApiAuthorizationFilter(authenticationManager()))
+                .addFilter(new AdminApiAuthorizationFilter(authenticationManager()))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
@@ -50,8 +50,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     protected CorsConfigurationSource corsConfigurationSource() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
-        corsConfiguration.addExposedHeader("apiToken");
-        corsConfiguration.addExposedHeader("solutionId");
+        corsConfiguration.addExposedHeader("adminApiToken");
         source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
     }
