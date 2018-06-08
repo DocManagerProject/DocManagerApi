@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.docmanager.dao.PageRepository;
 import pl.docmanager.domain.page.Page;
+import pl.docmanager.domain.page.PageState;
 import pl.docmanager.domain.user.User;
 import pl.docmanager.web.controllers.exception.EntityValidationException;
 import pl.docmanager.web.controllers.validation.PageValidator;
@@ -20,6 +21,7 @@ import pl.docmanager.web.security.AccessValidationException;
 import pl.docmanager.web.security.AccessValidator;
 import pl.docmanager.web.security.ApiTokenDecoder;
 
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -59,6 +61,8 @@ public class PageRestController {
         User user = apiTokenDecoder.getUseFromApiToken(apiToken);
         pageValidator.validatePage(page, user);
         accessValidator.validateSolution(user, page.getSolution().getId());
+        page.setCreateDate(LocalDateTime.now());
+        page.setState(PageState.ACTIVE);
         pageRepository.save(page);
     }
 
