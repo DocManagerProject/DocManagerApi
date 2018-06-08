@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -13,6 +14,7 @@ import pl.docmanager.domain.page.Page;
 import pl.docmanager.domain.page.PageState;
 import pl.docmanager.domain.solution.Solution;
 import pl.docmanager.domain.user.User;
+import pl.docmanager.web.controllers.validation.PageValidator;
 import pl.docmanager.web.security.JwtTokenGenerator;
 
 import java.time.LocalDateTime;
@@ -22,6 +24,8 @@ import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -33,6 +37,9 @@ public class PageRestControllerTest extends RestControllerTestBase {
 
     @MockBean
     private PageRepository pageRepository;
+
+    @SpyBean
+    private PageValidator pageValidator;
 
     @Before
     public void setup() {
@@ -117,5 +124,110 @@ public class PageRestControllerTest extends RestControllerTestBase {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("apiToken", validToken))
                 .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    public void addPageTestValid() throws Exception {
+        mvc.perform(post("/api/pages")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ " +
+                        "   \"name\": \"page\", " +
+                        "   \"solution\": { " +
+                        "      \"id\": 1 " +
+                        "   }, " +
+                        "   \"author\": { " +
+                        "       \"id\": 1" +
+                        "   }," +
+                        "   \"url\": \"url\"," +
+                        "   \"sections\": [{ " +
+                        "       \"name\": \"section\", " +
+                        "       \"content\": \"sectionContent\", " +
+                        "       \"index\": 0, " +
+                        "       \"url\": \"sectionUrl\" " +
+                        "   }]"+
+                        " }")
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .header("apiToken", validToken))
+                .andDo(print())
+                .andExpect(status().is(HttpStatus.OK.value()));
+    }
+
+    @Test
+    public void addPageTestNullSolution() throws Exception {
+        mvc.perform(post("/api/pages")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ " +
+                        "   \"name\": \"page\", " +
+                        "   \"author\": { " +
+                        "       \"id\": 1" +
+                        "   }," +
+                        "   \"url\": \"url\"," +
+                        "   \"sections\": [{ " +
+                        "       \"name\": \"section\", " +
+                        "       \"content\": \"sectionContent\", " +
+                        "       \"index\": 0, " +
+                        "       \"url\": \"sectionUrl\" " +
+                        "   }]"+
+                        " }")
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .header("apiToken", validToken))
+                .andDo(print())
+                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @Test
+    public void addPageTestNotMySolution() throws Exception {
+        mvc.perform(post("/api/pages")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ " +
+                        "   \"name\": \"page\", " +
+                        "   \"solution\": { " +
+                        "      \"id\": 2 " +
+                        "   }, " +
+                        "   \"author\": { " +
+                        "       \"id\": 1" +
+                        "   }," +
+                        "   \"url\": \"url\"," +
+                        "   \"sections\": [{ " +
+                        "       \"name\": \"section\", " +
+                        "       \"content\": \"sectionContent\", " +
+                        "       \"index\": 0, " +
+                        "       \"url\": \"sectionUrl\" " +
+                        "   }]"+
+                        " }")
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .header("apiToken", validToken))
+                .andDo(print())
+                .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    public void addPageTestWrongAuthor() throws Exception {
+        mvc.perform(post("/api/pages")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ " +
+                        "   \"name\": \"page\", " +
+                        "   \"solution\": { " +
+                        "      \"id\": 1 " +
+                        "   }, " +
+                        "   \"author\": { " +
+                        "       \"id\": 2" +
+                        "   }," +
+                        "   \"url\": \"url\"," +
+                        "   \"sections\": [{ " +
+                        "       \"name\": \"section\", " +
+                        "       \"content\": \"sectionContent\", " +
+                        "       \"index\": 0, " +
+                        "       \"url\": \"sectionUrl\" " +
+                        "   }]"+
+                        " }")
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .header("apiToken", validToken))
+                .andDo(print())
+                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
     }
 }
