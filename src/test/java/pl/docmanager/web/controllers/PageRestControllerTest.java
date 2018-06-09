@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.docmanager.dao.PageRepository;
+import pl.docmanager.dao.PageSectionRepository;
 import pl.docmanager.domain.page.Page;
 import pl.docmanager.domain.page.PageState;
 import pl.docmanager.domain.solution.Solution;
@@ -37,6 +38,9 @@ public class PageRestControllerTest extends RestControllerTestBase {
 
     @MockBean
     private PageRepository pageRepository;
+
+    @MockBean
+    private PageSectionRepository pageSectionRepository;
 
     @SpyBean
     private PageValidator pageValidator;

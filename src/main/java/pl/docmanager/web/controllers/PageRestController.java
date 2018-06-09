@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.docmanager.dao.PageRepository;
+import pl.docmanager.dao.PageSectionRepository;
 import pl.docmanager.domain.page.Page;
+import pl.docmanager.domain.page.PageSection;
+import pl.docmanager.domain.page.PageSectionState;
 import pl.docmanager.domain.page.PageState;
 import pl.docmanager.domain.user.User;
 import pl.docmanager.web.controllers.exception.EntityValidationException;
@@ -21,6 +24,7 @@ import pl.docmanager.web.security.AccessValidator;
 import pl.docmanager.web.security.ApiTokenDecoder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -31,14 +35,17 @@ public class PageRestController {
     private PageValidator pageValidator;
     private ApiTokenDecoder apiTokenDecoder;
     private PageRepository pageRepository;
+    private PageSectionRepository pageSectionRepository;
 
     @Autowired
     public PageRestController(AccessValidator accessValidator, PageValidator pageValidator,
-                              ApiTokenDecoder apiTokenDecoder, PageRepository pageRepository) {
+                              ApiTokenDecoder apiTokenDecoder, PageRepository pageRepository,
+                              PageSectionRepository pageSectionRepository) {
         this.accessValidator = accessValidator;
         this.pageValidator = pageValidator;
         this.apiTokenDecoder = apiTokenDecoder;
         this.pageRepository = pageRepository;
+        this.pageSectionRepository = pageSectionRepository;
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/api/pages/{id}")
@@ -63,6 +70,13 @@ public class PageRestController {
         page.setAuthor(user);
         page.setCreateDate(LocalDateTime.now());
         page.setState(PageState.ACTIVE);
+
+        List<PageSection> sections = page.getSections();
+        for (PageSection pageSection : sections) {
+            pageSection.setPage(page);
+            pageSection.setState(PageSectionState.ACTIVE);
+        }
+        pageSectionRepository.saveAll(sections);
         pageRepository.save(page);
     }
 
