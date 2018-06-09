@@ -65,7 +65,7 @@ public class PageRestControllerTest extends RestControllerTestBase {
         page.setUrl("example_page");
         page.setSolution(solution);
 
-        given(pageRepository.findById(1L)).willReturn(Optional.of(page));
+        given(pageRepository.findBySolution_IdAndUrl(1, "example_page")).willReturn(Optional.of(page));
 
         Solution solution2 = new Solution();
         solution2.setId(2);
@@ -83,7 +83,7 @@ public class PageRestControllerTest extends RestControllerTestBase {
         page2.setUrl("example_page");
         page2.setSolution(solution2);
 
-        given(pageRepository.findById(2L)).willReturn(Optional.of(page2));
+        given(pageRepository.findBySolution_IdAndUrl(2, "example_page")).willReturn(Optional.of(page2));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class PageRestControllerTest extends RestControllerTestBase {
         String expectedJson = "{id: 1, solution: {id: 1}, name: 'examplePage', " +
                 "createDate: '1970-01-01T00:00:00', " +
                 "author: {'id': 99}, sections: [], state: 'ACTIVE', url: 'example_page'}";
-        mvc.perform(get("/api/pages/1")
+        mvc.perform(get("/api/pages/solution/1/url/example_page")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("apiToken", validToken))
                 .andExpect(status().isOk())
@@ -100,7 +100,7 @@ public class PageRestControllerTest extends RestControllerTestBase {
 
     @Test
     public void getPageByIdTestNoApiToken() throws Exception {
-        mvc.perform(get("/api/pages/1")
+        mvc.perform(get("/api/pages/solution/1/url/example_page")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(HttpStatus.FORBIDDEN.value()));
     }
@@ -108,7 +108,7 @@ public class PageRestControllerTest extends RestControllerTestBase {
     @Test
     public void getPageByIdTestWrongApiToken() throws Exception {
         String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret", new Date(System.currentTimeMillis() + 1000000000));
-        mvc.perform(get("/api/pages/1")
+        mvc.perform(get("/api/pages/solution/1/url/example_page")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("apiToken", invalidToken))
                 .andExpect(status().is(HttpStatus.FORBIDDEN.value()));
@@ -116,7 +116,7 @@ public class PageRestControllerTest extends RestControllerTestBase {
 
     @Test
     public void getPageByIdTestSettingsNotFound() throws Exception {
-        mvc.perform(get("/api/pages/50")
+        mvc.perform(get("/api/pages/solution/1/url/i_dont_exist")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("apiToken", validToken))
                 .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
@@ -124,7 +124,7 @@ public class PageRestControllerTest extends RestControllerTestBase {
 
     @Test
     public void getPageByIdTestNoAccessToSolution() throws Exception {
-        mvc.perform(get("/api/pages/2")
+        mvc.perform(get("/api/pages/solution/2/url/example_page")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("apiToken", validToken))
                 .andExpect(status().is(HttpStatus.NOT_FOUND.value()));

@@ -48,11 +48,12 @@ public class PageRestController {
         this.pageSectionRepository = pageSectionRepository;
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/api/pages/{id}")
-    public Page getPageById(@PathVariable(name = "id") long id,
-                            @RequestHeader("apiToken") String apiToken) {
+    @RequestMapping(method = RequestMethod.GET, path = "/api/pages/solution/{solutionId}/url/{url}")
+    public Page getPageByUrl(@PathVariable("solutionId") long solutionId,
+                             @PathVariable("url") String url,
+                             @RequestHeader("apiToken") String apiToken) {
         User user = apiTokenDecoder.getUseFromApiToken(apiToken);
-        Optional<Page> optPage = pageRepository.findById(id);
+        Optional<Page> optPage = pageRepository.findBySolution_IdAndUrl(solutionId, url);
 
         if (optPage.isPresent()) {
             Page page = optPage.get();
