@@ -78,7 +78,7 @@ public class CategoryRestControllerTest extends RestControllerTestBase {
     }
 
     @Test
-    public void getCategoryByIdAndUrlTestValid() throws Exception {
+    public void getCategoryBySolutionIdAndUrlTestValid() throws Exception {
         String expectedJson = "{id: 1, solution: {id: 1}, name: 'exampleCategory', " +
                 "createDate: '1970-01-01T00:00:00', " +
                 "author: {'id': 99}, state: 'ACTIVE', url: 'example_category'}";
@@ -90,14 +90,14 @@ public class CategoryRestControllerTest extends RestControllerTestBase {
     }
 
     @Test
-    public void getCategoryByIdAndUrlTestNoApiToken() throws Exception {
+    public void getCategoryBySolutionIdAndUrlTestNoApiToken() throws Exception {
         mvc.perform(get("/api/categories/solution/1/url/example_category")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(HttpStatus.FORBIDDEN.value()));
     }
 
     @Test
-    public void getCategoryByIdAndUrlTestWrongApiToken() throws Exception {
+    public void getCategoryBySolutionIdAndUrlTestWrongApiToken() throws Exception {
         String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret", new Date(System.currentTimeMillis() + 1000000000));
         mvc.perform(get("/api/categories/solution/1/url/example_category")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -106,7 +106,7 @@ public class CategoryRestControllerTest extends RestControllerTestBase {
     }
 
     @Test
-    public void getCategoryByIdAndUrlTestCategoryNotFound() throws Exception {
+    public void getCategoryBySolutionIdAndUrlTestCategoryNotFound() throws Exception {
         mvc.perform(get("/api/categories/solution/1/url/i_dont_exist")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("apiToken", validToken))
@@ -114,7 +114,7 @@ public class CategoryRestControllerTest extends RestControllerTestBase {
     }
 
     @Test
-    public void getCategoryByIdAndUrlTestNoAccessToSolution() throws Exception {
+    public void getCategoryBySolutionIdAndUrlTestNoAccessToSolution() throws Exception {
         mvc.perform(get("/api/categories/solution/2/url/example_category")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("apiToken", validToken))

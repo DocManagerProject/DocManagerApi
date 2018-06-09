@@ -87,7 +87,7 @@ public class PageRestControllerTest extends RestControllerTestBase {
     }
 
     @Test
-    public void getPageByIdTestValid() throws Exception {
+    public void getPageBySolutionIdAndUrlTestValid() throws Exception {
         String expectedJson = "{id: 1, solution: {id: 1}, name: 'examplePage', " +
                 "createDate: '1970-01-01T00:00:00', " +
                 "author: {'id': 99}, sections: [], state: 'ACTIVE', url: 'example_page'}";
@@ -99,14 +99,14 @@ public class PageRestControllerTest extends RestControllerTestBase {
     }
 
     @Test
-    public void getPageByIdTestNoApiToken() throws Exception {
+    public void getPageBySolutionIdAndUrlTestNoApiToken() throws Exception {
         mvc.perform(get("/api/pages/solution/1/url/example_page")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(HttpStatus.FORBIDDEN.value()));
     }
 
     @Test
-    public void getPageByIdTestWrongApiToken() throws Exception {
+    public void getPageBySolutionIdAndUrlTestWrongApiToken() throws Exception {
         String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret", new Date(System.currentTimeMillis() + 1000000000));
         mvc.perform(get("/api/pages/solution/1/url/example_page")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -115,7 +115,7 @@ public class PageRestControllerTest extends RestControllerTestBase {
     }
 
     @Test
-    public void getPageByIdTestSettingsNotFound() throws Exception {
+    public void getPageBySolutionIdAndUrlTestPageNotFound() throws Exception {
         mvc.perform(get("/api/pages/solution/1/url/i_dont_exist")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("apiToken", validToken))
@@ -123,7 +123,7 @@ public class PageRestControllerTest extends RestControllerTestBase {
     }
 
     @Test
-    public void getPageByIdTestNoAccessToSolution() throws Exception {
+    public void getPageBySolutionIdAndUrlTestNoAccessToSolution() throws Exception {
         mvc.perform(get("/api/pages/solution/2/url/example_page")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("apiToken", validToken))
