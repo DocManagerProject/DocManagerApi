@@ -203,31 +203,4 @@ public class PageRestControllerTest extends RestControllerTestBase {
                 .andDo(print())
                 .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
-
-    @Test
-    public void addPageTestWrongAuthor() throws Exception {
-        mvc.perform(post("/api/pages")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ " +
-                        "   \"name\": \"page\", " +
-                        "   \"solution\": { " +
-                        "      \"id\": 1 " +
-                        "   }, " +
-                        "   \"author\": { " +
-                        "       \"id\": 2" +
-                        "   }," +
-                        "   \"url\": \"url\"," +
-                        "   \"sections\": [{ " +
-                        "       \"name\": \"section\", " +
-                        "       \"content\": \"sectionContent\", " +
-                        "       \"index\": 0, " +
-                        "       \"url\": \"sectionUrl\" " +
-                        "   }]"+
-                        " }")
-                .accept(MediaType.APPLICATION_JSON)
-                .characterEncoding("UTF-8")
-                .header("apiToken", validToken))
-                .andDo(print())
-                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
-    }
 }

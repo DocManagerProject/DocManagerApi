@@ -3,7 +3,6 @@ package pl.docmanager.web.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -59,8 +58,9 @@ public class PageRestController {
     @RequestMapping(method = RequestMethod.POST, path = "/api/pages")
     public void addPage(@RequestBody Page page, @RequestHeader("apiToken") String apiToken) {
         User user = apiTokenDecoder.getUseFromApiToken(apiToken);
-        pageValidator.validatePage(page, user);
+        pageValidator.validatePage(page);
         accessValidator.validateSolution(user, page.getSolution().getId());
+        page.setAuthor(user);
         page.setCreateDate(LocalDateTime.now());
         page.setState(PageState.ACTIVE);
         pageRepository.save(page);
