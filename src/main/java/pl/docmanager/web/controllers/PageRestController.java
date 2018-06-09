@@ -76,8 +76,8 @@ public class PageRestController {
             pageSection.setPage(page);
             pageSection.setState(PageSectionState.ACTIVE);
         }
-        pageSectionRepository.saveAll(sections);
         pageRepository.save(page);
+        pageSectionRepository.saveAll(sections);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
