@@ -25,6 +25,8 @@ import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -106,6 +108,66 @@ public class CategoryRestControllerTest extends RestControllerTestBase {
         mvc.perform(get("/api/categories/solution/2/url/example_category")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("apiToken", validToken))
+                .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    public void addCategoryTestValid() throws Exception {
+        mvc.perform(post("/api/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ " +
+                        "   \"name\": \"category\", " +
+                        "   \"solution\": { " +
+                        "      \"id\": 1 " +
+                        "   }, " +
+                        "   \"author\": { " +
+                        "       \"id\": 1" +
+                        "   }," +
+                        "   \"url\": \"url\"" +
+                        " }")
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .header("apiToken", validToken))
+                .andDo(print())
+                .andExpect(status().is(HttpStatus.OK.value()));
+    }
+
+    @Test
+    public void addCategoryTestNullSolution() throws Exception {
+        mvc.perform(post("/api/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ " +
+                        "   \"name\": \"category\", " +
+                        "   \"author\": { " +
+                        "       \"id\": 1" +
+                        "   }," +
+                        "   \"url\": \"url\"" +
+                        " }")
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .header("apiToken", validToken))
+                .andDo(print())
+                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @Test
+    public void addCategoryTestNotMySolution() throws Exception {
+        mvc.perform(post("/api/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ " +
+                        "   \"name\": \"category\", " +
+                        "   \"solution\": { " +
+                        "      \"id\": 2 " +
+                        "   }, " +
+                        "   \"author\": { " +
+                        "       \"id\": 1" +
+                        "   }," +
+                        "   \"url\": \"url\"" +
+                        " }")
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .header("apiToken", validToken))
+                .andDo(print())
                 .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
 }
