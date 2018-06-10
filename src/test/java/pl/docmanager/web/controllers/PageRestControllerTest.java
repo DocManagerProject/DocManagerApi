@@ -11,15 +11,16 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.docmanager.dao.PageRepository;
 import pl.docmanager.dao.PageSectionRepository;
+import pl.docmanager.domain.PageBuilder;
+import pl.docmanager.domain.SolutionBuilder;
+import pl.docmanager.domain.UserBuilder;
 import pl.docmanager.domain.page.Page;
-import pl.docmanager.domain.page.PageState;
 import pl.docmanager.domain.solution.Solution;
 import pl.docmanager.domain.user.User;
 import pl.docmanager.web.controllers.validation.PageValidator;
 import pl.docmanager.web.security.JwtTokenGenerator;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
@@ -49,39 +50,23 @@ public class PageRestControllerTest extends RestControllerTestBase {
     public void setup() {
         super.setup();
 
-        Solution solution = new Solution();
-        solution.setId(1);
-
-        User author = new User();
-        author.setId(99);
-
-        Page page = new Page();
-        page.setId(1);
-        page.setAuthor(author);
-        page.setCreateDate(LocalDateTime.of(1970, 1, 1, 0, 0));
-        page.setName("examplePage");
-        page.setSections(new ArrayList<>());
-        page.setState(PageState.ACTIVE);
-        page.setUrl("example_page");
-        page.setSolution(solution);
+        Solution solution = new SolutionBuilder(1).build();
+        User author = new UserBuilder(99, solution).build();
+        Page page = new PageBuilder(1, solution)
+                .withAutor(author)
+                .withCreateDate(LocalDateTime.of(1970, 1, 1, 0, 0))
+                .withName("examplePage")
+                .withUrl("example_page").build();
 
         given(pageRepository.findBySolution_IdAndUrl(1, "example_page")).willReturn(Optional.of(page));
 
-        Solution solution2 = new Solution();
-        solution2.setId(2);
-
-        User author2 = new User();
-        author2.setId(199);
-
-        Page page2 = new Page();
-        page2.setId(2);
-        page2.setAuthor(author2);
-        page2.setCreateDate(LocalDateTime.now());
-        page2.setName("examplePage");
-        page2.setSections(new ArrayList<>());
-        page2.setState(PageState.ACTIVE);
-        page2.setUrl("example_page");
-        page2.setSolution(solution2);
+        Solution solution2 = new SolutionBuilder(2).build();
+        User author2 = new UserBuilder(199, solution2).build();
+        Page page2 = new PageBuilder(2, solution2)
+                .withAutor(author2)
+                .withCreateDate(LocalDateTime.now())
+                .withName("examplePage")
+                .withUrl("example_page").build();
 
         given(pageRepository.findBySolution_IdAndUrl(2, "example_page")).willReturn(Optional.of(page2));
     }

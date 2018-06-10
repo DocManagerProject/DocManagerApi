@@ -10,9 +10,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.docmanager.Application;
 import pl.docmanager.dao.UserRepository;
+import pl.docmanager.domain.SolutionBuilder;
+import pl.docmanager.domain.UserBuilder;
 import pl.docmanager.domain.solution.Solution;
 import pl.docmanager.domain.user.User;
-import pl.docmanager.domain.user.UserState;
 import pl.docmanager.web.security.AccessValidator;
 import pl.docmanager.web.security.ApiTokenDecoder;
 import pl.docmanager.web.security.JwtTokenGenerator;
@@ -45,14 +46,8 @@ public abstract class RestControllerTestBase {
     @Before
     public void setup() {
 
-        Solution solution1 = new Solution();
-        solution1.setId(1);
-
-        User user = new User();
-        user.setId(1);
-        user.setEmail(USER_EMAIL);
-        user.setSolution(solution1);
-        user.setState(UserState.ACTIVE);
+        Solution solution1 = new SolutionBuilder(1).build();
+        User user = new UserBuilder(1, solution1).withEmail(USER_EMAIL).build();
 
         given(userRepository.findByEmail(USER_EMAIL)).willReturn(Optional.of(user));
 

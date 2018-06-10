@@ -10,8 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.docmanager.dao.CategoryRepository;
+import pl.docmanager.domain.CategoryBuilder;
+import pl.docmanager.domain.SolutionBuilder;
+import pl.docmanager.domain.UserBuilder;
 import pl.docmanager.domain.category.Category;
-import pl.docmanager.domain.category.CategoryState;
 import pl.docmanager.domain.solution.Solution;
 import pl.docmanager.domain.user.User;
 import pl.docmanager.web.controllers.validation.CategoryValidator;
@@ -42,37 +44,23 @@ public class CategoryRestControllerTest extends RestControllerTestBase {
     public void setup() {
         super.setup();
 
-        Solution solution = new Solution();
-        solution.setId(1);
-
-        User author = new User();
-        author.setId(99);
-
-        Category category = new Category();
-        category.setId(1);
-        category.setAuthor(author);
-        category.setCreateDate(LocalDateTime.of(1970, 1, 1, 0, 0));
-        category.setName("exampleCategory");
-        category.setUrl("example_category");
-        category.setState(CategoryState.ACTIVE);
-        category.setSolution(solution);
+        Solution solution = new SolutionBuilder(1).build();
+        User author = new UserBuilder(99, solution).build();
+        Category category = new CategoryBuilder(1, solution)
+                .withAuthor(author)
+                .withCreateDate(LocalDateTime.of(1970, 1, 1, 0, 0))
+                .withName("exampleCategory")
+                .withUrl("example_category").build();
 
         given(categoryRepository.findBySolution_IdAndUrl(1, "example_category")).willReturn(Optional.of(category));
 
-        Solution solution2 = new Solution();
-        solution2.setId(2);
-
-        User author2 = new User();
-        author2.setId(99);
-
-        Category category2 = new Category();
-        category2.setId(2);
-        category2.setAuthor(author2);
-        category2.setCreateDate(LocalDateTime.of(1970, 1, 1, 0, 0));
-        category2.setName("exampleCategory");
-        category2.setUrl("example_category");
-        category2.setState(CategoryState.ACTIVE);
-        category2.setSolution(solution2);
+        Solution solution2 = new SolutionBuilder(2).build();
+        User author2 = new UserBuilder(199, solution2).build();
+        Category category2 = new CategoryBuilder(1, solution2)
+                .withAuthor(author2)
+                .withCreateDate(LocalDateTime.of(1970, 1, 1, 0, 0))
+                .withName("exampleCategory")
+                .withUrl("example_category").build();
 
         given(categoryRepository.findBySolution_IdAndUrl(2, "example_category")).willReturn(Optional.of(category2));
     }

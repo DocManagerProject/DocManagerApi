@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.docmanager.dao.SettingsRepository;
+import pl.docmanager.domain.SettingsBuilder;
+import pl.docmanager.domain.SolutionBuilder;
 import pl.docmanager.domain.global.Settings;
 import pl.docmanager.domain.solution.Solution;
 import pl.docmanager.web.security.JwtTokenGenerator;
@@ -34,28 +36,20 @@ public class SettingsRestControllerTest extends RestControllerTestBase {
     public void setup() {
         super.setup();
 
-        Solution solution1 = new Solution();
-        solution1.setId(1);
-
-        Settings settings = new Settings();
-        settings.setId(1);
-        settings.setSolution(solution1);
-        settings.setDomain("exampleDomain");
-        settings.setName("exampleName");
-        settings.setValue("exampleValue");
+        Solution solution1 = new SolutionBuilder(1).build();
+        Settings settings = new SettingsBuilder(1, solution1)
+                .withName("exampleName")
+                .withValue("exampleValue")
+                .withDomain("exampleDomain").build();
 
         given(settingsRepository.findBySolution_IdAndName(1, "test"))
                 .willReturn(Optional.of(settings));
 
-        Solution solution2 = new Solution();
-        solution2.setId(2);
-
-        Settings settings2 = new Settings();
-        settings2.setId(2);
-        settings2.setSolution(solution2);
-        settings2.setDomain("exampleDomain");
-        settings2.setName("exampleName");
-        settings2.setValue("exampleValue");
+        Solution solution2 = new SolutionBuilder(2).build();
+        Settings settings2 = new SettingsBuilder(2, solution2)
+                .withName("exampleName")
+                .withValue("exampleValue")
+                .withDomain("exampleDomain").build();
 
         given(settingsRepository.findBySolution_IdAndName(2, "test"))
                 .willReturn(Optional.of(settings2));
