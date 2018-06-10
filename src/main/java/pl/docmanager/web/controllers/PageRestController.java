@@ -72,4 +72,21 @@ public class PageRestController extends RestControllerBase {
         pageRepository.save(page);
         pageSectionRepository.saveAll(sections);
     }
+
+    @RequestMapping(method = RequestMethod.POST, path = "/api/pages/solution/{solutionId}/url/{url}")
+    public void updatePage(@RequestBody Page page, @PathVariable("solutionId") long solutionId,
+                           @PathVariable("url") String url, @RequestHeader("apiToken") String apiToken) {
+        User user = apiTokenDecoder.getUseFromApiToken(apiToken);
+        pageValidator.validatePage(page);
+        accessValidator.validateSolution(user, solutionId);
+        Optional<Page> existingPageOpt = pageRepository.findBySolution_IdAndUrl(solutionId, url);
+
+        if (!existingPageOpt.isPresent()) {
+            throw new NoSuchElementException();
+        }
+
+        Page existingPage = existingPageOpt.get();
+        pageValidator.validateLegalUpdate(user, existingPage, page);
+        pageRepository.save(page);
+    }
 }
