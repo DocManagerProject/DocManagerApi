@@ -11,7 +11,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.docmanager.dao.DaoTestBase;
-import pl.docmanager.dao.PageSectionRepository;
 import pl.docmanager.dao.exception.EntityValidationException;
 import pl.docmanager.domain.PageBuilder;
 import pl.docmanager.domain.SolutionBuilder;

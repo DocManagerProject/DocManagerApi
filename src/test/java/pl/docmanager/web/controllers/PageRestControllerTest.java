@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -16,10 +15,8 @@ import pl.docmanager.domain.UserBuilder;
 import pl.docmanager.domain.page.Page;
 import pl.docmanager.domain.solution.Solution;
 import pl.docmanager.domain.user.User;
-import pl.docmanager.web.security.JwtTokenGenerator;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;

@@ -2,7 +2,6 @@ package pl.docmanager.dao.page;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.docmanager.dao.PageSectionRepository;
 import pl.docmanager.domain.page.Page;
 import pl.docmanager.domain.page.PageSection;
 import pl.docmanager.domain.page.PageSectionState;

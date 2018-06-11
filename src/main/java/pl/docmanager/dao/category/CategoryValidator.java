@@ -1,4 +1,4 @@
-package pl.docmanager.web.controllers.validation;
+package pl.docmanager.dao.category;
 
 import org.springframework.stereotype.Service;
 import pl.docmanager.domain.category.Category;
