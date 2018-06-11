@@ -24,13 +24,16 @@ public class CategoryRestController extends RestControllerBase {
 
     private CategoryValidator categoryValidator;
     private CategoryRepository categoryRepository;
+    private AccessValidator accessValidator;
+    private ApiTokenDecoder apiTokenDecoder;
 
     @Autowired
     public CategoryRestController(AccessValidator accessValidator, CategoryValidator categoryValidator,
                                   ApiTokenDecoder apiTokenDecoder, CategoryRepository categoryRepository) {
-        super(accessValidator, apiTokenDecoder);
         this.categoryValidator = categoryValidator;
         this.categoryRepository = categoryRepository;
+        this.apiTokenDecoder = apiTokenDecoder;
+        this.accessValidator = accessValidator;
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/api/categories/solution/{solutionId}/url/{url}")

@@ -24,13 +24,16 @@ public class CategoryItemRestController extends RestControllerBase {
 
     private CategoryRepository categoryRepository;
     private CategoryItemRepository categoryItemRepository;
+    private AccessValidator accessValidator;
+    private ApiTokenDecoder apiTokenDecoder;
 
     @Autowired
     public CategoryItemRestController(AccessValidator accessValidator,
                                       CategoryRepository categoryRepository,
                                       CategoryItemRepository categoryItemRepository,
                                       ApiTokenDecoder apiTokenDecoder) {
-        super(accessValidator, apiTokenDecoder);
+        this.accessValidator = accessValidator;
+        this.apiTokenDecoder = apiTokenDecoder;
         this.categoryRepository = categoryRepository;
         this.categoryItemRepository = categoryItemRepository;
     }

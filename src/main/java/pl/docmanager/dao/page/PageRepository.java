@@ -1,4 +1,4 @@
-package pl.docmanager.dao;
+package pl.docmanager.dao.page;
 
 import org.springframework.data.repository.CrudRepository;
 import pl.docmanager.domain.page.Page;

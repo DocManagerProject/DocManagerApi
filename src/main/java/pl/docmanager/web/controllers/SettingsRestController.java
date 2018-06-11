@@ -19,12 +19,15 @@ import java.util.Optional;
 public class SettingsRestController extends RestControllerBase {
 
     private SettingsRepository settingsRepository;
+    private ApiTokenDecoder apiTokenDecoder;
+    private AccessValidator accessValidator;
 
     @Autowired
     public SettingsRestController(AccessValidator accessValidator,
                                   ApiTokenDecoder apiTokenDecoder,
                                   SettingsRepository settingsRepository) {
-        super(accessValidator, apiTokenDecoder);
+        this.accessValidator = accessValidator;
+        this.apiTokenDecoder = apiTokenDecoder;
         this.settingsRepository = settingsRepository;
     }
 
