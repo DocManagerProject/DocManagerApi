@@ -29,14 +29,26 @@ public class CategoryDao {
         this.categoryValidator = categoryValidator;
     }
 
+    public Category getCategoryById(long id, String apiToken) {
+        User user = apiTokenDecoder.getUseFromApiToken(apiToken);
+        Optional<Category> optCategory = categoryRepository.findById(id);
+
+        if (optCategory.isPresent()) {
+            Category category = optCategory.get();
+            accessValidator.validateSolution(user, category.getSolution().getId());
+            return category;
+        }
+        throw new NoSuchElementException();
+    }
+
     public Category getCategoryByUrl(String url, long solutionId, String apiToken) {
         User user = apiTokenDecoder.getUseFromApiToken(apiToken);
         Optional<Category> optCategory = categoryRepository.findBySolution_IdAndUrl(solutionId, url);
 
         if (optCategory.isPresent()) {
-            Category page = optCategory.get();
-            accessValidator.validateSolution(user, page.getSolution().getId());
-            return page;
+            Category category = optCategory.get();
+            accessValidator.validateSolution(user, category.getSolution().getId());
+            return category;
         }
         throw new NoSuchElementException();
     }

@@ -58,17 +58,49 @@ public class CategoryDaoTest extends DaoTestBase {
                 .withUrl("example_category").build();
 
         given(categoryRepository.findBySolution_IdAndUrl(1, "example_category")).willReturn(Optional.of(category1));
+        given(categoryRepository.findById(1L)).willReturn(Optional.of(category1));
 
         Solution solution2 = new SolutionBuilder(2).build();
         User author2 = new UserBuilder(199, solution2).build();
-        category2 = new CategoryBuilder(1, solution2)
+        category2 = new CategoryBuilder(2, solution2)
                 .withAuthor(author2)
                 .withCreateDate(LocalDateTime.of(1970, 1, 1, 0, 0))
                 .withName("exampleCategory")
                 .withUrl("example_category").build();
 
         given(categoryRepository.findBySolution_IdAndUrl(2, "example_category")).willReturn(Optional.of(category2));
+        given(categoryRepository.findById(2L)).willReturn(Optional.of(category2));
+    }
 
+    @Test
+    public void getCategoryByIdTestValid() {
+        assertEquals(category1, categoryDao.getCategoryById(1, validToken));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getCategoryByIdTestNullApiToken() {
+        categoryDao.getCategoryById( 1, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getCategoryByIdTestEmptyApiToken() {
+        categoryDao.getCategoryById(1, "");
+    }
+
+    @Test(expected = SignatureException.class)
+    public void getCategoryByIdTestWrongApiToken() {
+        String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret", new Date(System.currentTimeMillis() + 1000000000));
+        categoryDao.getCategoryById(1, invalidToken);
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void getCategoryByIdTestNonExistingCategory() {
+        categoryDao.getCategoryById(100, validToken);
+    }
+
+    @Test(expected = AccessValidationException.class)
+    public void getCategoryByIdTestNoAccessToSolution() {
+        categoryDao.getCategoryById(2, validToken);
     }
 
     @Test
