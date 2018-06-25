@@ -75,7 +75,6 @@ public class PageDao {
             existingPage.setUrl(updatesMap.get("url").toString());
         }
 
-        // TODO add sections update
         pageRepository.save(existingPage);
         return existingPage;
     }

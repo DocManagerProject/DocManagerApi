@@ -17,7 +17,7 @@ public class PageValidator {
     }
 
     public void validateLegalUpdate(User user, Page page, Map<String, Object> updatesMap) {
-        // TODO: add sections validation
+
         if (updatesMap.containsKey("author")) {
             throw new EntityValidationException("Cannot change Page's author");
         }
