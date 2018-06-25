@@ -44,6 +44,10 @@ public class PageValidator {
             throw new EntityValidationException("Page's name cannot be null nor empty");
         }
 
+        if (updatesMap.containsKey("content") && updatesMap.get("content") == null) {
+            throw new EntityValidationException("Page's content cannot be null");
+        }
+
         if (updatesMap.containsKey("url") &&
                 (updatesMap.get("url") == null || updatesMap.get("url").toString().isEmpty())) {
             throw new EntityValidationException("Page's url cannot be null nor empty");

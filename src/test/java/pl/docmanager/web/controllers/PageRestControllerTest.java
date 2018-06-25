@@ -47,6 +47,7 @@ public class PageRestControllerTest extends RestControllerTestBase {
                 .withAutor(author)
                 .withCreateDate(LocalDateTime.of(1970, 1, 1, 0, 0))
                 .withName("examplePage")
+                .withContent("exampleContent")
                 .withUrl("example_page").build();
 
         given(pageDao.getPageByUrl("example_page", 1, validToken)).willReturn(page);
@@ -55,8 +56,8 @@ public class PageRestControllerTest extends RestControllerTestBase {
     @Test
     public void getPageBySolutionIdAndUrlTestValid() throws Exception {
         String expectedJson = "{id: 1, solution: {id: 1}, name: 'examplePage', " +
-                "createDate: '1970-01-01T00:00:00', " +
-                "author: {'id': 99}, sections: [], state: 'ACTIVE', url: 'example_page'}";
+                "content: 'exampleContent', createDate: '1970-01-01T00:00:00', " +
+                "author: {'id': 99}, state: 'ACTIVE', url: 'example_page'}";
         mvc.perform(get("/api/pages/solution/1/url/example_page")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("apiToken", validToken))
@@ -70,19 +71,14 @@ public class PageRestControllerTest extends RestControllerTestBase {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ " +
                         "   \"name\": \"page\", " +
+                        "   \"content\": \"pageContent\", " +
                         "   \"solution\": { " +
                         "      \"id\": 1 " +
                         "   }, " +
                         "   \"author\": { " +
                         "       \"id\": 1" +
                         "   }," +
-                        "   \"url\": \"url\"," +
-                        "   \"sections\": [{ " +
-                        "       \"name\": \"section\", " +
-                        "       \"content\": \"sectionContent\", " +
-                        "       \"index\": 0, " +
-                        "       \"url\": \"sectionUrl\" " +
-                        "   }]"+
+                        "   \"url\": \"url\"" +
                         " }")
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8")
@@ -98,6 +94,7 @@ public class PageRestControllerTest extends RestControllerTestBase {
             .contentType(MediaType.APPLICATION_JSON)
             .content("{ " +
                     "   \"name\": \"changedPageName\", " +
+                    "   \"content\": \"changedPageContent\", " +
                     "   \"url\": \"changedUrl\" " +
                     " }")
             .accept(MediaType.APPLICATION_JSON)

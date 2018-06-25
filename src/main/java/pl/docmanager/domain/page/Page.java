@@ -6,17 +6,13 @@ import pl.docmanager.domain.user.User;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "page")
@@ -37,6 +33,9 @@ public class Page {
     @Column(name = "name", length = 256, nullable = false)
     private String name;
 
+    @Column(name = "content", nullable = false)
+    private String content;
+
     @Column(name = "createdate", nullable = false)
     private LocalDateTime createDate;
 
@@ -46,10 +45,6 @@ public class Page {
     @Enumerated
     @Column(name = "state", nullable = false)
     private PageState state;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "page")
-    @OrderBy("index desc")
-    private List<PageSection> sections;
 
     public long getId() {
         return id;
@@ -83,6 +78,14 @@ public class Page {
         this.name = name;
     }
 
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     public LocalDateTime getCreateDate() {
         return createDate;
     }
@@ -107,11 +110,4 @@ public class Page {
         this.state = state;
     }
 
-    public List<PageSection> getSections() {
-        return sections;
-    }
-
-    public void setSections(List<PageSection> sections) {
-        this.sections = sections;
-    }
 }

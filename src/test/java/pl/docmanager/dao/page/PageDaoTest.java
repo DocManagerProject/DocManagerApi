@@ -16,16 +16,13 @@ import pl.docmanager.domain.PageBuilder;
 import pl.docmanager.domain.SolutionBuilder;
 import pl.docmanager.domain.UserBuilder;
 import pl.docmanager.domain.page.Page;
-import pl.docmanager.domain.page.PageSection;
 import pl.docmanager.domain.solution.Solution;
 import pl.docmanager.domain.user.User;
 import pl.docmanager.web.security.AccessValidationException;
 import pl.docmanager.web.security.JwtTokenGenerator;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -45,9 +42,6 @@ public class PageDaoTest extends DaoTestBase {
     @MockBean
     private PageRepository pageRepository;
 
-    @MockBean
-    private PageSectionRepository pageSectionRepository;
-
     @SpyBean
     private PageValidator pageValidator;
 
@@ -63,6 +57,7 @@ public class PageDaoTest extends DaoTestBase {
                 .withAutor(author)
                 .withCreateDate(LocalDateTime.of(1970, 1, 1, 0, 0))
                 .withName("examplePage")
+                .withContent("exampleContent")
                 .withUrl("example_page").build();
 
         given(pageRepository.findBySolution_IdAndUrl(1, "example_page")).willReturn(Optional.of(page1));
@@ -73,6 +68,7 @@ public class PageDaoTest extends DaoTestBase {
                 .withAutor(author2)
                 .withCreateDate(LocalDateTime.of(1970, 1, 1, 0, 0))
                 .withName("examplePage")
+                .withContent("exampleContent")
                 .withUrl("example_page").build();
 
         given(pageRepository.findBySolution_IdAndUrl(2, "example_page")).willReturn(Optional.of(page2));
@@ -112,26 +108,23 @@ public class PageDaoTest extends DaoTestBase {
     @Test
     public void addPageTestValid() {
         Solution solution = new SolutionBuilder(1).build();
-        List<PageSection> pageSections = Collections.singletonList(new PageSection());
         Page page = new PageBuilder(0, solution)
                 .withName("page")
+                .withContent("exampleContent")
                 .withAutor(new UserBuilder(1, solution).build())
-                .withUrl("url")
-                .withSections(pageSections).build();
+                .withUrl("url").build();
         pageDao.addPage(page, validToken);
         verify(pageRepository, times(1)).save(page);
-        verify(pageSectionRepository, times(1)).saveAll(pageSections);
     }
 
     @Test(expected = EntityValidationException.class)
     public void addPageTestNullSolution() {
         Solution solution = new SolutionBuilder(1).build();
-        List<PageSection> pageSections = Collections.singletonList(new PageSection());
         Page page = new PageBuilder(0, null)
                 .withName("page")
+                .withContent("exampleContent")
                 .withAutor(new UserBuilder(1, solution).build())
-                .withUrl("url")
-                .withSections(pageSections).build();
+                .withUrl("url").build();
         pageDao.addPage(page, validToken);
     }
 
@@ -139,36 +132,33 @@ public class PageDaoTest extends DaoTestBase {
     public void addPageTestNotMySolution() {
         Solution solution1 = new SolutionBuilder(1).build();
         Solution solution2 = new SolutionBuilder(2).build();
-        List<PageSection> pageSections = Collections.singletonList(new PageSection());
         Page page = new PageBuilder(0, solution2)
                 .withName("page")
+                .withContent("exampleContent")
                 .withAutor(new UserBuilder(1, solution1).build())
-                .withUrl("url")
-                .withSections(pageSections).build();
+                .withUrl("url").build();
         pageDao.addPage(page, validToken);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void addPageTestNullApiToken() {
         Solution solution = new SolutionBuilder(1).build();
-        List<PageSection> pageSections = Collections.singletonList(new PageSection());
         Page page = new PageBuilder(0, solution)
                 .withName("page")
+                .withContent("exampleContent")
                 .withAutor(new UserBuilder(1, solution).build())
-                .withUrl("url")
-                .withSections(pageSections).build();
+                .withUrl("url").build();
         pageDao.addPage(page, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void addPageTestEmptyApiToken() {
         Solution solution = new SolutionBuilder(1).build();
-        List<PageSection> pageSections = Collections.singletonList(new PageSection());
         Page page = new PageBuilder(0, solution)
                 .withName("page")
+                .withContent("exampleContent")
                 .withAutor(new UserBuilder(1, solution).build())
-                .withUrl("url")
-                .withSections(pageSections).build();
+                .withUrl("url").build();
         pageDao.addPage(page, "");
     }
 
@@ -176,12 +166,11 @@ public class PageDaoTest extends DaoTestBase {
     public void addPageTestWrongApiToken() {
         String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret", new Date(System.currentTimeMillis() + 1000000000));
         Solution solution = new SolutionBuilder(1).build();
-        List<PageSection> pageSections = Collections.singletonList(new PageSection());
         Page page = new PageBuilder(0, solution)
                 .withName("page")
+                .withContent("exampleContent")
                 .withAutor(new UserBuilder(1, solution).build())
-                .withUrl("url")
-                .withSections(pageSections).build();
+                .withUrl("url").build();
         pageDao.addPage(page, invalidToken);
     }
 
@@ -225,6 +214,30 @@ public class PageDaoTest extends DaoTestBase {
     public void updatePageUrlEmptyTest() {
         Map<String, Object> updatesMap = Maps.newHashMap("url", "");
         pageDao.updatePage(updatesMap, "example_page", 1, validToken);
+    }
+
+    @Test
+    public void updatePageContentTestValid() {
+        Map<String, Object> updatesMap = Maps.newHashMap("content", "newContent");
+        Page page = pageDao.updatePage(updatesMap, "example_page", 1, validToken);
+
+        assertEquals("newContent", page.getContent());
+        verify(pageRepository, times(1)).save(page);
+    }
+
+    @Test(expected = EntityValidationException.class)
+    public void updatePageContentNullTest() {
+        Map<String, Object> updatesMap = Maps.newHashMap("content", null);
+        pageDao.updatePage(updatesMap, "example_page", 1, validToken);
+    }
+
+    @Test
+    public void updatePageContentEmptyTest() {
+        Map<String, Object> updatesMap = Maps.newHashMap("content", "");
+        Page page = pageDao.updatePage(updatesMap, "example_page", 1, validToken);
+
+        assertEquals("", page.getContent());
+        verify(pageRepository, times(1)).save(page);
     }
 
     @Test(expected = IllegalArgumentException.class)
