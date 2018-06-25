@@ -18,9 +18,12 @@ import pl.docmanager.domain.user.User;
 
 import java.time.LocalDateTime;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -90,5 +93,22 @@ public class CategoryRestControllerTest extends RestControllerTestBase {
                 .header("apiToken", validToken))
                 .andDo(print())
                 .andExpect(status().is(HttpStatus.OK.value()));
+    }
+
+    @Test
+    public void updateCategoryTestValid() throws Exception {
+        mvc.perform(patch("/api/categories/solution/1/url/example_category")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ " +
+                        "   \"name\": \"changedCategoryName\", " +
+                        "   \"url\": \"changedUrl\" " +
+                        " }")
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .header("apiToken", validToken))
+                .andDo(print())
+                .andExpect(status().is(HttpStatus.OK.value()));
+        verify(categoryDao, times(1))
+                .updateCategory(any(), any(), eq(1L), eq(validToken));
     }
 }

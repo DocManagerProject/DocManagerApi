@@ -9,6 +9,7 @@ import pl.docmanager.web.security.AccessValidator;
 import pl.docmanager.web.security.ApiTokenDecoder;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -61,5 +62,25 @@ public class CategoryDao {
         category.setCreateDate(LocalDateTime.now());
         category.setState(CategoryState.ACTIVE);
         categoryRepository.save(category);
+    }
+
+    public Category updateCategory(Map<String, Object> updatesMap, String url, long solutionId, String apiToken) {
+        User user = apiTokenDecoder.getUseFromApiToken(apiToken);
+        accessValidator.validateSolution(user, solutionId);
+
+        Optional<Category> existingCategoryOpt = categoryRepository.findBySolution_IdAndUrl(solutionId, url);
+        Category existingCategory = existingCategoryOpt.orElseThrow(NoSuchElementException::new);
+
+        categoryValidator.validateLegalUpdate(user, existingCategory, updatesMap);
+        if (updatesMap.containsKey("name")) {
+            existingCategory.setName(updatesMap.get("name").toString());
+        }
+
+        if (updatesMap.containsKey("url")) {
+            existingCategory.setUrl(updatesMap.get("url").toString());
+        }
+
+        categoryRepository.save(existingCategory);
+        return existingCategory;
     }
 }
