@@ -1,6 +1,5 @@
 package pl.docmanager.dao.category;
 
-import io.jsonwebtoken.SignatureException;
 import org.assertj.core.util.Maps;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,16 +17,14 @@ import pl.docmanager.domain.UserBuilder;
 import pl.docmanager.domain.category.Category;
 import pl.docmanager.domain.solution.Solution;
 import pl.docmanager.domain.user.User;
-import pl.docmanager.web.security.AccessValidationException;
-import pl.docmanager.web.security.JwtTokenGenerator;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -76,64 +73,22 @@ public class CategoryDaoTest extends DaoTestBase {
 
     @Test
     public void getCategoryByIdTestValid() {
-        assertEquals(category1, categoryDao.getCategoryById(1, validToken));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getCategoryByIdTestNullApiToken() {
-        categoryDao.getCategoryById( 1, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getCategoryByIdTestEmptyApiToken() {
-        categoryDao.getCategoryById(1, "");
-    }
-
-    @Test(expected = SignatureException.class)
-    public void getCategoryByIdTestWrongApiToken() {
-        String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret", new Date(System.currentTimeMillis() + 1000000000));
-        categoryDao.getCategoryById(1, invalidToken);
+        assertEquals(category1, categoryDao.getCategoryById(1));
     }
 
     @Test(expected = NoSuchElementException.class)
     public void getCategoryByIdTestNonExistingCategory() {
-        categoryDao.getCategoryById(100, validToken);
-    }
-
-    @Test(expected = AccessValidationException.class)
-    public void getCategoryByIdTestNoAccessToSolution() {
-        categoryDao.getCategoryById(2, validToken);
+        categoryDao.getCategoryById(100);
     }
 
     @Test
     public void getCategoryByUrlTestValid() {
-        assertEquals(category1, categoryDao.getCategoryByUrl("example_category", 1, validToken));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getCategoryByUrlTestNullApiToken() {
-        categoryDao.getCategoryByUrl("example_category", 1, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getCategoryByUrlTestEmptyApiToken() {
-        categoryDao.getCategoryByUrl("example_category", 1, "");
-    }
-
-    @Test(expected = SignatureException.class)
-    public void getCategoryByUrlTestWrongApiToken() {
-        String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret", new Date(System.currentTimeMillis() + 1000000000));
-        categoryDao.getCategoryByUrl("example_category", 1, invalidToken);
+        assertEquals(category1, categoryDao.getCategoryByUrl("example_category", 1));
     }
 
     @Test(expected = NoSuchElementException.class)
     public void getCategoryByUrlTestNonExistingCategory() {
-        categoryDao.getCategoryByUrl("i_dont_exist", 1, validToken);
-    }
-
-    @Test(expected = AccessValidationException.class)
-    public void getCategoryByUrlTestNoAccessToSolution() {
-        categoryDao.getCategoryByUrl("example_category", 2, validToken);
+        categoryDao.getCategoryByUrl("i_dont_exist", 1);
     }
 
     @Test
@@ -143,7 +98,7 @@ public class CategoryDaoTest extends DaoTestBase {
                 .withName("category")
                 .withUrl("url")
                 .withAuthor(new UserBuilder(1, solution).build()).build();
-        categoryDao.addCategory(category, validToken);
+        categoryDao.addCategory(category);
         verify(categoryRepository, times(1)).save(category);
     }
 
@@ -154,134 +109,63 @@ public class CategoryDaoTest extends DaoTestBase {
                 .withName("category")
                 .withUrl("url")
                 .withAuthor(new UserBuilder(1, solution).build()).build();
-        categoryDao.addCategory(category, validToken);
-    }
-
-    @Test(expected = AccessValidationException.class)
-    public void addCategoryTestNotMySolution() {
-        Solution solution1 = new SolutionBuilder(1).build();
-        Solution solution2 = new SolutionBuilder(2).build();
-        Category category = new CategoryBuilder(0, solution2)
-                .withName("category")
-                .withUrl("url")
-                .withAuthor(new UserBuilder(1, solution1).build()).build();
-        categoryDao.addCategory(category, validToken);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void addCategoryTestNullApiToken() {
-        Solution solution = new SolutionBuilder(1).build();
-        Category category = new CategoryBuilder(0, solution)
-                .withName("category")
-                .withUrl("url")
-                .withAuthor(new UserBuilder(1, solution).build()).build();
-        categoryDao.addCategory(category, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void addCategoryTestEmptyApiToken() {
-        Solution solution = new SolutionBuilder(1).build();
-        Category category = new CategoryBuilder(0, solution)
-                .withName("category")
-                .withUrl("url")
-                .withAuthor(new UserBuilder(1, solution).build()).build();
-        categoryDao.addCategory(category, "");
-    }
-
-    @Test(expected = SignatureException.class)
-    public void addCategoryTestWrongApiToken() {
-        String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret", new Date(System.currentTimeMillis() + 1000000000));
-        Solution solution = new SolutionBuilder(1).build();
-        Category category = new CategoryBuilder(0, solution)
-                .withName("category")
-                .withUrl("url")
-                .withAuthor(new UserBuilder(1, solution).build()).build();
-        categoryDao.addCategory(category, invalidToken);
+        categoryDao.addCategory(category);
     }
 
     @Test
     public void updateCategoryNameTestValid() {
         Map<String, Object> updatesMap = Maps.newHashMap("name", "newName");
-        Category category = categoryDao.updateCategory(updatesMap, "example_category", 1, validToken);
-
-        assertEquals("newName", category.getName());
-        verify(categoryRepository, times(1)).save(category);
+        updatesMap.put("url", "newUrl");
+        categoryDao.updateCategory(updatesMap, "example_category", 1);
+        verify(categoryRepository, times(1)).save(any());
     }
 
     @Test(expected = EntityValidationException.class)
     public void updateCategoryNameNullTest() {
         Map<String, Object> updatesMap = Maps.newHashMap("name", null);
-        categoryDao.updateCategory(updatesMap, "example_category", 1, validToken);
+        categoryDao.updateCategory(updatesMap, "example_category", 1);
     }
 
     @Test(expected = EntityValidationException.class)
     public void updateCategoryNameEmptyTest() {
         Map<String, Object> updatesMap = Maps.newHashMap("name", "");
-        categoryDao.updateCategory(updatesMap, "example_category", 1, validToken);
-    }
-
-    @Test
-    public void updateCategoryUrlTestValid() {
-        Map<String, Object> updatesMap = Maps.newHashMap("url", "newUrl");
-        Category category = categoryDao.updateCategory(updatesMap, "example_category", 1, validToken);
-
-        assertEquals("newUrl", category.getUrl());
-        verify(categoryRepository, times(1)).save(category);
+        categoryDao.updateCategory(updatesMap, "example_category", 1);
     }
 
     @Test(expected = EntityValidationException.class)
     public void updateCategoryUrlNullTest() {
         Map<String, Object> updatesMap = Maps.newHashMap("url", null);
-        categoryDao.updateCategory(updatesMap, "example_category", 1, validToken);
+        categoryDao.updateCategory(updatesMap, "example_category", 1);
     }
 
     @Test(expected = EntityValidationException.class)
     public void updateCategoryUrlEmptyTest() {
         Map<String, Object> updatesMap = Maps.newHashMap("url", "");
-        categoryDao.updateCategory(updatesMap, "example_category", 1, validToken);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void updateCategoryTestNullApiToken() {
-        Map<String, Object> updatesMap = Maps.newHashMap("name", "newName");
-        categoryDao.updateCategory(updatesMap, "example_category", 1, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void updateCategoryTestEmptyApiToken() {
-        Map<String, Object> updatesMap = Maps.newHashMap("name", "newName");
-        categoryDao.updateCategory(updatesMap, "example_category", 1, "");
-    }
-
-    @Test(expected = SignatureException.class)
-    public void updateCategoryTestWrongApiToken() {
-        String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret", new Date(System.currentTimeMillis() + 1000000000));
-        Map<String, Object> updatesMap = Maps.newHashMap("name", "newName");
-        categoryDao.updateCategory(updatesMap, "example_category", 1, invalidToken);
+        categoryDao.updateCategory(updatesMap, "example_category", 1);
     }
 
     @Test(expected = EntityValidationException.class)
     public void updateCategoryUrlTestUpdateId() {
         Map<String, Object> updatesMap = Maps.newHashMap("id", 5);
-        categoryDao.updateCategory(updatesMap, "example_category", 1, validToken);
+        categoryDao.updateCategory(updatesMap, "example_category", 1);
     }
 
     @Test(expected = EntityValidationException.class)
     public void updateCategoryUrlTestUpdateCreateDate() {
         Map<String, Object> updatesMap = Maps.newHashMap("createDate", LocalDateTime.now());
-        categoryDao.updateCategory(updatesMap, "example_category", 1, validToken);
+        categoryDao.updateCategory(updatesMap, "example_category", 1);
     }
 
     @Test(expected = EntityValidationException.class)
     public void updateCategoryUrlTestUpdateSolution() {
         Map<String, Object> updatesMap = Maps.newHashMap("solution", new SolutionBuilder(5).build());
-        categoryDao.updateCategory(updatesMap, "example_category", 1, validToken);
+        categoryDao.updateCategory(updatesMap, "example_category", 1);
     }
 
     @Test(expected = EntityValidationException.class)
     public void updateCategoryUrlTestUpdateAuthor() {
         Solution solution = new SolutionBuilder(1).build();
         Map<String, Object> updatesMap = Maps.newHashMap("solution", new UserBuilder(5, solution).build());
-        categoryDao.updateCategory(updatesMap, "example_category", 1, validToken);
+        categoryDao.updateCategory(updatesMap, "example_category", 1);
     }
 }

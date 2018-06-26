@@ -29,7 +29,7 @@ public class CategoryItemDao {
     }
 
     public List<CategoryItem> getAllByCategoryId(long categoryId, String apiToken) {
-        Category category = categoryDao.getCategoryById(categoryId, apiToken);
+        Category category = categoryDao.getCategoryById(categoryId);
         User user = apiTokenDecoder.getUseFromApiToken(apiToken);
         accessValidator.validateSolution(user, category.getSolution().getId());
 

@@ -3,7 +3,6 @@ package pl.docmanager.dao.category;
 import org.springframework.stereotype.Service;
 import pl.docmanager.dao.exception.EntityValidationException;
 import pl.docmanager.domain.category.Category;
-import pl.docmanager.domain.user.User;
 
 import java.util.Map;
 
@@ -16,7 +15,7 @@ public class CategoryValidator {
         }
     }
 
-    public void validateLegalUpdate(User user, Category category, Map<String, Object> updatesMap) {
+    public void validateLegalUpdate(Map<String, Object> updatesMap) {
         if (updatesMap.containsKey("author")) {
             throw new EntityValidationException("Cannot change Category's author");
         }

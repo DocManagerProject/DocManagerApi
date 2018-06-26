@@ -8,13 +8,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import pl.docmanager.dao.category.CategoryDao;
 import pl.docmanager.domain.CategoryBuilder;
 import pl.docmanager.domain.SolutionBuilder;
 import pl.docmanager.domain.UserBuilder;
 import pl.docmanager.domain.category.Category;
 import pl.docmanager.domain.solution.Solution;
 import pl.docmanager.domain.user.User;
+import pl.docmanager.web.service.category.CategoryService;
 
 import java.time.LocalDateTime;
 
@@ -35,7 +35,7 @@ public class CategoryRestControllerTest extends RestControllerTestBase {
     private MockMvc mvc;
 
     @MockBean
-    private CategoryDao categoryDao;
+    private CategoryService categoryService;
 
     @Before
     public void setup() {
@@ -49,7 +49,7 @@ public class CategoryRestControllerTest extends RestControllerTestBase {
                 .withName("exampleCategory")
                 .withUrl("example_category").build();
 
-        given(categoryDao.getCategoryByUrl("example_category", 1, validToken)).willReturn(category);
+        given(categoryService.getCategoryByUrl("example_category", 1, validToken)).willReturn(category);
 
         Solution solution2 = new SolutionBuilder(2).build();
         User author2 = new UserBuilder(199, solution2).build();
@@ -59,7 +59,7 @@ public class CategoryRestControllerTest extends RestControllerTestBase {
                 .withName("exampleCategory")
                 .withUrl("example_category").build();
 
-        given(categoryDao.getCategoryByUrl("example_category", 2, validToken)).willReturn(category2);
+        given(categoryService.getCategoryByUrl("example_category", 2, validToken)).willReturn(category2);
     }
 
     @Test
@@ -108,7 +108,7 @@ public class CategoryRestControllerTest extends RestControllerTestBase {
                 .header("apiToken", validToken))
                 .andDo(print())
                 .andExpect(status().is(HttpStatus.OK.value()));
-        verify(categoryDao, times(1))
+        verify(categoryService, times(1))
                 .updateCategory(any(), any(), eq(1L), eq(validToken));
     }
 }
