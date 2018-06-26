@@ -1,6 +1,5 @@
 package pl.docmanager.dao.settings;
 
-import io.jsonwebtoken.SignatureException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,10 +12,7 @@ import pl.docmanager.domain.SettingsBuilder;
 import pl.docmanager.domain.SolutionBuilder;
 import pl.docmanager.domain.global.Settings;
 import pl.docmanager.domain.solution.Solution;
-import pl.docmanager.web.security.AccessValidationException;
-import pl.docmanager.web.security.JwtTokenGenerator;
 
-import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -61,32 +57,11 @@ public class SettingsDaoTest extends DaoTestBase {
 
     @Test
     public void getSettingsByNameTestValid() {
-        assertEquals(settings1, settingsDao.getSettingsByName("test", 1, validToken));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getSettingsByNameTestNullApiToken() {
-        settingsDao.getSettingsByName("test", 1, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getSettingsByNameTestEmptyApiToken() {
-        settingsDao.getSettingsByName("test", 1, null);
-    }
-
-    @Test(expected = SignatureException.class)
-    public void getSettingsByNameTestWrongApiToken() {
-        String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret", new Date(System.currentTimeMillis() + 1000000000));
-        settingsDao.getSettingsByName("test", 1, invalidToken);
+        assertEquals(settings1, settingsDao.getSettingsByName("test", 1));
     }
 
     @Test(expected = NoSuchElementException.class)
     public void getSettingsByNameTestNonExistingSettings() {
-        settingsDao.getSettingsByName("i_dont_exist", 1, validToken);
-    }
-
-    @Test(expected = AccessValidationException.class)
-    public void getSettingsByNameTestNoAccessToSolution() {
-        settingsDao.getSettingsByName("test", 2, validToken);
+        settingsDao.getSettingsByName("i_dont_exist", 1);
     }
 }

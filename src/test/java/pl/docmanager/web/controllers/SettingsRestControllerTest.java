@@ -7,11 +7,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import pl.docmanager.dao.settings.SettingsDao;
 import pl.docmanager.domain.SettingsBuilder;
 import pl.docmanager.domain.SolutionBuilder;
 import pl.docmanager.domain.global.Settings;
 import pl.docmanager.domain.solution.Solution;
+import pl.docmanager.web.service.settings.SettingsService;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,7 +25,7 @@ public class SettingsRestControllerTest extends RestControllerTestBase {
     private MockMvc mvc;
 
     @MockBean
-    private SettingsDao settingsDao;
+    private SettingsService settingsService;
 
     @Before
     public void setup() {
@@ -37,7 +37,7 @@ public class SettingsRestControllerTest extends RestControllerTestBase {
                 .withValue("exampleValue")
                 .withDomain("exampleDomain").build();
 
-        given(settingsDao.getSettingsByName("test", 1, validToken))
+        given(settingsService.getSettingsByName("test", 1, validToken))
                 .willReturn(settings);
 
         Solution solution2 = new SolutionBuilder(2).build();
@@ -46,7 +46,7 @@ public class SettingsRestControllerTest extends RestControllerTestBase {
                 .withValue("exampleValue")
                 .withDomain("exampleDomain").build();
 
-        given(settingsDao.getSettingsByName("test", 2, validToken))
+        given(settingsService.getSettingsByName("test", 2, validToken))
                 .willReturn(settings2);
     }
 
