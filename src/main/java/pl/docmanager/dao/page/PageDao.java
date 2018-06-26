@@ -3,66 +3,34 @@ package pl.docmanager.dao.page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.docmanager.domain.page.Page;
-import pl.docmanager.domain.page.PageState;
-import pl.docmanager.domain.user.User;
-import pl.docmanager.web.security.AccessValidator;
-import pl.docmanager.web.security.ApiTokenDecoder;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 public class PageDao {
-
-    private AccessValidator accessValidator;
-    private ApiTokenDecoder apiTokenDecoder;
     private PageRepository pageRepository;
     private PageValidator pageValidator;
 
     @Autowired
-    public PageDao(AccessValidator accessValidator, ApiTokenDecoder apiTokenDecoder,
-                   PageRepository pageRepository, PageValidator pageValidator) {
-        this.accessValidator = accessValidator;
-        this.apiTokenDecoder = apiTokenDecoder;
+    public PageDao(PageRepository pageRepository, PageValidator pageValidator) {
         this.pageRepository = pageRepository;
         this.pageValidator = pageValidator;
     }
 
-    public Page getPageByUrl(String url, long solutionId, String apiToken) {
-        User user = apiTokenDecoder.getUseFromApiToken(apiToken);
-        Optional<Page> optPage = pageRepository.findBySolution_IdAndUrl(solutionId, url);
-
-        if (optPage.isPresent()) {
-            Page page = optPage.get();
-            accessValidator.validateSolution(user, page.getSolution().getId());
-            return page;
-        }
-        throw new NoSuchElementException();
+    public Page getPageByUrl(String url, long solutionId) {
+        return pageRepository.findBySolution_IdAndUrl(solutionId, url).orElseThrow(NoSuchElementException::new);
     }
 
-    public void addPage(Page page, String apiToken) {
-        User user = apiTokenDecoder.getUseFromApiToken(apiToken);
+    public void addPage(Page page) {
         pageValidator.validatePage(page);
-        accessValidator.validateSolution(user, page.getSolution().getId());
-        page.setAuthor(user);
-        page.setCreateDate(LocalDateTime.now());
-        page.setState(PageState.ACTIVE);
         pageRepository.save(page);
     }
 
-    public Page updatePage(Map<String, Object> updatesMap, String url, long solutionId, String apiToken) {
-        User user = apiTokenDecoder.getUseFromApiToken(apiToken);
-        accessValidator.validateSolution(user, solutionId);
-        Optional<Page> existingPageOpt = pageRepository.findBySolution_IdAndUrl(solutionId, url);
+    public Page updatePage(Map<String, Object> updatesMap, String url, long solutionId) {
+        Page existingPage = pageRepository.findBySolution_IdAndUrl(solutionId, url).orElseThrow(NoSuchElementException::new);
+        pageValidator.validateLegalUpdate(updatesMap);
 
-        if (!existingPageOpt.isPresent()) {
-            throw new NoSuchElementException();
-        }
-
-        Page existingPage = existingPageOpt.get();
-        pageValidator.validateLegalUpdate(user, existingPage, updatesMap);
         if (updatesMap.containsKey("name")) {
             existingPage.setName(updatesMap.get("name").toString());
         }
@@ -75,7 +43,6 @@ public class PageDao {
             existingPage.setUrl(updatesMap.get("url").toString());
         }
 
-        pageRepository.save(existingPage);
-        return existingPage;
+        return pageRepository.save(existingPage);
     }
 }

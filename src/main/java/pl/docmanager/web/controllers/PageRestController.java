@@ -8,31 +8,31 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-import pl.docmanager.dao.page.PageDao;
 import pl.docmanager.domain.page.Page;
+import pl.docmanager.web.service.page.PageService;
 
 import java.util.Map;
 
 @RestController
 public class PageRestController extends RestControllerBase {
 
-    private PageDao pageDao;
+    private PageService pageService;
 
     @Autowired
-    public PageRestController(PageDao pageDao) {
-        this.pageDao = pageDao;
+    public PageRestController(PageService pageService) {
+        this.pageService = pageService;
     }
 
     @GetMapping("/api/pages/solution/{solutionId}/url/{url}")
     public Page getPageByUrl(@PathVariable("solutionId") long solutionId,
                              @PathVariable("url") String url,
                              @RequestHeader("apiToken") String apiToken) {
-        return pageDao.getPageByUrl(url, solutionId, apiToken);
+        return pageService.getPageByUrl(url, solutionId, apiToken);
     }
 
     @PostMapping("/api/pages")
     public void addPage(@RequestBody Page page, @RequestHeader("apiToken") String apiToken) {
-        pageDao.addPage(page, apiToken);
+        pageService.addPage(page, apiToken);
     }
 
     @PatchMapping("/api/pages/solution/{solutionId}/url/{url}")
@@ -40,6 +40,6 @@ public class PageRestController extends RestControllerBase {
                            @PathVariable("solutionId") long solutionId,
                            @PathVariable("url") String url,
                            @RequestHeader("apiToken") String apiToken) {
-        pageDao.updatePage(updatesMap, url, solutionId, apiToken);
+        pageService.updatePage(updatesMap, url, solutionId, apiToken);
     }
 }

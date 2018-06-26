@@ -8,13 +8,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import pl.docmanager.dao.page.PageDao;
 import pl.docmanager.domain.PageBuilder;
 import pl.docmanager.domain.SolutionBuilder;
 import pl.docmanager.domain.UserBuilder;
 import pl.docmanager.domain.page.Page;
 import pl.docmanager.domain.solution.Solution;
 import pl.docmanager.domain.user.User;
+import pl.docmanager.web.service.page.PageService;
 
 import java.time.LocalDateTime;
 
@@ -35,7 +35,7 @@ public class PageRestControllerTest extends RestControllerTestBase {
     private MockMvc mvc;
 
     @MockBean
-    private PageDao pageDao;
+    private PageService pageService;
 
     @Before
     public void setup() {
@@ -50,7 +50,7 @@ public class PageRestControllerTest extends RestControllerTestBase {
                 .withContent("exampleContent")
                 .withUrl("example_page").build();
 
-        given(pageDao.getPageByUrl("example_page", 1, validToken)).willReturn(page);
+        given(pageService.getPageByUrl("example_page", 1, validToken)).willReturn(page);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class PageRestControllerTest extends RestControllerTestBase {
                 .header("apiToken", validToken))
                 .andDo(print())
                 .andExpect(status().is(HttpStatus.OK.value()));
-        verify(pageDao, times(1)).addPage(any(), eq(validToken));
+        verify(pageService, times(1)).addPage(any(), eq(validToken));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class PageRestControllerTest extends RestControllerTestBase {
             .header("apiToken", validToken))
             .andDo(print())
             .andExpect(status().is(HttpStatus.OK.value()));
-        verify(pageDao, times(1))
+        verify(pageService, times(1))
                 .updatePage(any(), any(), eq(1L), eq(validToken));
     }
 }

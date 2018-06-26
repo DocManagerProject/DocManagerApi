@@ -1,9 +1,8 @@
 package pl.docmanager.dao.page;
 
 import org.springframework.stereotype.Service;
-import pl.docmanager.domain.page.Page;
-import pl.docmanager.domain.user.User;
 import pl.docmanager.dao.exception.EntityValidationException;
+import pl.docmanager.domain.page.Page;
 
 import java.util.Map;
 
@@ -16,7 +15,7 @@ public class PageValidator {
         }
     }
 
-    public void validateLegalUpdate(User user, Page page, Map<String, Object> updatesMap) {
+    public void validateLegalUpdate(Map<String, Object> updatesMap) {
 
         if (updatesMap.containsKey("author")) {
             throw new EntityValidationException("Cannot change Page's author");

@@ -1,6 +1,5 @@
 package pl.docmanager.dao.page;
 
-import io.jsonwebtoken.SignatureException;
 import org.assertj.core.util.Maps;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,16 +17,14 @@ import pl.docmanager.domain.UserBuilder;
 import pl.docmanager.domain.page.Page;
 import pl.docmanager.domain.solution.Solution;
 import pl.docmanager.domain.user.User;
-import pl.docmanager.web.security.AccessValidationException;
-import pl.docmanager.web.security.JwtTokenGenerator;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -76,35 +73,13 @@ public class PageDaoTest extends DaoTestBase {
 
     @Test
     public void getPageByUrlTestValid() {
-        assertEquals(page1, pageDao.getPageByUrl("example_page", 1, validToken));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getPageByUrlTestNullApiToken() {
-        pageDao.getPageByUrl("example_page", 1, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getPageByUrlTestEmptyApiToken() {
-        pageDao.getPageByUrl("example_page", 1, "");
-    }
-
-    @Test(expected = SignatureException.class)
-    public void getPageByUrlTestWrongApiToken() {
-        String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret", new Date(System.currentTimeMillis() + 1000000000));
-        pageDao.getPageByUrl("example_page", 1, invalidToken);
+        assertEquals(page1, pageDao.getPageByUrl("example_page", 1));
     }
 
     @Test(expected = NoSuchElementException.class)
     public void getPageByUrlTestNonExistingPage() {
-        pageDao.getPageByUrl("i_dont_exist", 1, validToken);
+        pageDao.getPageByUrl("i_dont_exist", 1);
     }
-
-    @Test(expected = AccessValidationException.class)
-    public void getPageByUrlTestNoAccessToSolution() {
-        pageDao.getPageByUrl("example_page", 2, validToken);
-    }
-
     @Test
     public void addPageTestValid() {
         Solution solution = new SolutionBuilder(1).build();
@@ -113,7 +88,7 @@ public class PageDaoTest extends DaoTestBase {
                 .withContent("exampleContent")
                 .withAutor(new UserBuilder(1, solution).build())
                 .withUrl("url").build();
-        pageDao.addPage(page, validToken);
+        pageDao.addPage(page);
         verify(pageRepository, times(1)).save(page);
     }
 
@@ -125,162 +100,77 @@ public class PageDaoTest extends DaoTestBase {
                 .withContent("exampleContent")
                 .withAutor(new UserBuilder(1, solution).build())
                 .withUrl("url").build();
-        pageDao.addPage(page, validToken);
-    }
-
-    @Test(expected = AccessValidationException.class)
-    public void addPageTestNotMySolution() {
-        Solution solution1 = new SolutionBuilder(1).build();
-        Solution solution2 = new SolutionBuilder(2).build();
-        Page page = new PageBuilder(0, solution2)
-                .withName("page")
-                .withContent("exampleContent")
-                .withAutor(new UserBuilder(1, solution1).build())
-                .withUrl("url").build();
-        pageDao.addPage(page, validToken);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void addPageTestNullApiToken() {
-        Solution solution = new SolutionBuilder(1).build();
-        Page page = new PageBuilder(0, solution)
-                .withName("page")
-                .withContent("exampleContent")
-                .withAutor(new UserBuilder(1, solution).build())
-                .withUrl("url").build();
-        pageDao.addPage(page, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void addPageTestEmptyApiToken() {
-        Solution solution = new SolutionBuilder(1).build();
-        Page page = new PageBuilder(0, solution)
-                .withName("page")
-                .withContent("exampleContent")
-                .withAutor(new UserBuilder(1, solution).build())
-                .withUrl("url").build();
-        pageDao.addPage(page, "");
-    }
-
-    @Test(expected = SignatureException.class)
-    public void addPageTestWrongApiToken() {
-        String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret", new Date(System.currentTimeMillis() + 1000000000));
-        Solution solution = new SolutionBuilder(1).build();
-        Page page = new PageBuilder(0, solution)
-                .withName("page")
-                .withContent("exampleContent")
-                .withAutor(new UserBuilder(1, solution).build())
-                .withUrl("url").build();
-        pageDao.addPage(page, invalidToken);
+        pageDao.addPage(page);
     }
 
     @Test
-    public void updatePageNameTestValid() {
+    public void updatePageTestValid() {
         Map<String, Object> updatesMap = Maps.newHashMap("name", "newName");
-        Page page = pageDao.updatePage(updatesMap, "example_page", 1, validToken);
-
-        assertEquals("newName", page.getName());
-        verify(pageRepository, times(1)).save(page);
+        updatesMap.put("url", "newUrl");
+        updatesMap.put("content", "newContent");
+        pageDao.updatePage(updatesMap, "example_page", 1);
+        verify(pageRepository, times(1)).save(any());
     }
 
     @Test(expected = EntityValidationException.class)
     public void updatePageNameNullTest() {
         Map<String, Object> updatesMap = Maps.newHashMap("name", null);
-        pageDao.updatePage(updatesMap, "example_page", 1, validToken);
+        pageDao.updatePage(updatesMap, "example_page", 1);
     }
 
     @Test(expected = EntityValidationException.class)
     public void updatePageNameEmptyTest() {
         Map<String, Object> updatesMap = Maps.newHashMap("name", "");
-        pageDao.updatePage(updatesMap, "example_page", 1, validToken);
-    }
-
-    @Test
-    public void updatePageUrlTestValid() {
-        Map<String, Object> updatesMap = Maps.newHashMap("url", "newUrl");
-        Page page = pageDao.updatePage(updatesMap, "example_page", 1, validToken);
-
-        assertEquals("newUrl", page.getUrl());
-        verify(pageRepository, times(1)).save(page);
+        pageDao.updatePage(updatesMap, "example_page", 1);
     }
 
     @Test(expected = EntityValidationException.class)
     public void updatePageUrlNullTest() {
         Map<String, Object> updatesMap = Maps.newHashMap("url", null);
-        pageDao.updatePage(updatesMap, "example_page", 1, validToken);
+        pageDao.updatePage(updatesMap, "example_page", 1);
     }
 
     @Test(expected = EntityValidationException.class)
     public void updatePageUrlEmptyTest() {
         Map<String, Object> updatesMap = Maps.newHashMap("url", "");
-        pageDao.updatePage(updatesMap, "example_page", 1, validToken);
-    }
-
-    @Test
-    public void updatePageContentTestValid() {
-        Map<String, Object> updatesMap = Maps.newHashMap("content", "newContent");
-        Page page = pageDao.updatePage(updatesMap, "example_page", 1, validToken);
-
-        assertEquals("newContent", page.getContent());
-        verify(pageRepository, times(1)).save(page);
+        pageDao.updatePage(updatesMap, "example_page", 1);
     }
 
     @Test(expected = EntityValidationException.class)
     public void updatePageContentNullTest() {
         Map<String, Object> updatesMap = Maps.newHashMap("content", null);
-        pageDao.updatePage(updatesMap, "example_page", 1, validToken);
+        pageDao.updatePage(updatesMap, "example_page", 1);
     }
 
     @Test
     public void updatePageContentEmptyTest() {
         Map<String, Object> updatesMap = Maps.newHashMap("content", "");
-        Page page = pageDao.updatePage(updatesMap, "example_page", 1, validToken);
-
-        assertEquals("", page.getContent());
-        verify(pageRepository, times(1)).save(page);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void updatePageTestNullApiToken() {
-        Map<String, Object> updatesMap = Maps.newHashMap("name", "newName");
-        pageDao.updatePage(updatesMap, "example_page", 1, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void updatePageTestEmptyApiToken() {
-        Map<String, Object> updatesMap = Maps.newHashMap("name", "newName");
-        pageDao.updatePage(updatesMap, "example_page", 1, "");
-    }
-
-    @Test(expected = SignatureException.class)
-    public void updatePageTestWrongApiToken() {
-        String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret", new Date(System.currentTimeMillis() + 1000000000));
-        Map<String, Object> updatesMap = Maps.newHashMap("name", "newName");
-        pageDao.updatePage(updatesMap, "example_page", 1, invalidToken);
+        pageDao.updatePage(updatesMap, "example_page", 1);
+        verify(pageRepository, times(1)).save(any());
     }
 
     @Test(expected = EntityValidationException.class)
     public void updatePageUrlTestUpdateId() {
         Map<String, Object> updatesMap = Maps.newHashMap("id", 5);
-        pageDao.updatePage(updatesMap, "example_page", 1, validToken);
+        pageDao.updatePage(updatesMap, "example_page", 1);
     }
 
     @Test(expected = EntityValidationException.class)
     public void updatePageUrlTestUpdateCreateDate() {
         Map<String, Object> updatesMap = Maps.newHashMap("createDate", LocalDateTime.now());
-        pageDao.updatePage(updatesMap, "example_page", 1, validToken);
+        pageDao.updatePage(updatesMap, "example_page", 1);
     }
 
     @Test(expected = EntityValidationException.class)
     public void updatePageUrlTestUpdateSolution() {
         Map<String, Object> updatesMap = Maps.newHashMap("solution", new SolutionBuilder(5).build());
-        pageDao.updatePage(updatesMap, "example_page", 1, validToken);
+        pageDao.updatePage(updatesMap, "example_page", 1);
     }
 
     @Test(expected = EntityValidationException.class)
     public void updatePageUrlTestUpdateAuthor() {
         Solution solution = new SolutionBuilder(1).build();
         Map<String, Object> updatesMap = Maps.newHashMap("solution", new UserBuilder(5, solution).build());
-        pageDao.updatePage(updatesMap, "example_page", 1, validToken);
+        pageDao.updatePage(updatesMap, "example_page", 1);
     }
 }
