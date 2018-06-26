@@ -1,6 +1,5 @@
 package pl.docmanager.dao.category;
 
-import io.jsonwebtoken.SignatureException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,17 +14,14 @@ import pl.docmanager.domain.SolutionBuilder;
 import pl.docmanager.domain.category.Category;
 import pl.docmanager.domain.category.CategoryItem;
 import pl.docmanager.domain.solution.Solution;
-import pl.docmanager.web.security.AccessValidationException;
-import pl.docmanager.web.security.JwtTokenGenerator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
@@ -79,37 +75,15 @@ public class CategoryItemDaoTest extends DaoTestBase {
     @Test
     public void getAllByCategoryIdTestValid() {
         List<CategoryItem> categoryItems = Arrays.asList(categoryItem1, categoryItem2, categoryItem3);
-        assertTrue(categoryItems.containsAll(categoryItemDao.getAllByCategoryId(1, validToken)));
+        assertTrue(categoryItems.containsAll(categoryItemDao.getAllByCategoryId(1)));
     }
 
     @Test
     public void getAllByCategoryIdTestValidCategoryEmpty() {
-        assertTrue(categoryItemDao.getAllByCategoryId(3, validToken).isEmpty());
+        assertTrue(categoryItemDao.getAllByCategoryId(3).isEmpty());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getAllByCategoryIdTestNullApiToken() {
-        categoryItemDao.getAllByCategoryId(1, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getAllByCategoryIdTestEmptyApiToken() {
-        categoryItemDao.getAllByCategoryId(1, "");
-    }
-
-    @Test(expected = SignatureException.class)
-    public void getAllByCategoryIdTestWrongApiToken() {
-        String invalidToken = JwtTokenGenerator.generateToken(USER_EMAIL, "invalidSecret", new Date(System.currentTimeMillis() + 1000000000));
-        categoryItemDao.getAllByCategoryId(1, invalidToken);
-    }
-
-    @Test(expected = NoSuchElementException.class)
     public void getAllByCategoryIdTestNonExistingCategory() {
-        categoryItemDao.getAllByCategoryId(5, validToken);
-    }
-
-    @Test(expected = AccessValidationException.class)
-    public void getAllByCategoryIdTestNoAccessToSolution() {
-        categoryItemDao.getAllByCategoryId(2, validToken);
+        assertTrue(categoryItemDao.getAllByCategoryId(5).isEmpty());
     }
 }

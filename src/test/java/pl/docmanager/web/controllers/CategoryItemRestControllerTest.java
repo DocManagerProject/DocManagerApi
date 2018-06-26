@@ -7,13 +7,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import pl.docmanager.dao.category.CategoryItemDao;
 import pl.docmanager.domain.CategoryBuilder;
 import pl.docmanager.domain.CategoryItemBuilder;
 import pl.docmanager.domain.SolutionBuilder;
 import pl.docmanager.domain.category.Category;
 import pl.docmanager.domain.category.CategoryItem;
 import pl.docmanager.domain.solution.Solution;
+import pl.docmanager.web.service.category.CategoryItemService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +30,7 @@ public class CategoryItemRestControllerTest extends RestControllerTestBase {
     private MockMvc mvc;
 
     @MockBean
-    private CategoryItemDao categoryItemDao;
+    private CategoryItemService categoryItemService;
 
     @Before
     public void setup() {
@@ -41,7 +41,7 @@ public class CategoryItemRestControllerTest extends RestControllerTestBase {
         CategoryItem categoryItem2 = new CategoryItemBuilder(2, category1).build();
         CategoryItem categoryItem3 = new CategoryItemBuilder(3, category1).build();
 
-        given(categoryItemDao.getAllByCategoryId(1, validToken))
+        given(categoryItemService.getAllByCategoryId(1, validToken))
                 .willReturn(Arrays.asList(categoryItem1, categoryItem2, categoryItem3));
 
         Solution solution2 = new SolutionBuilder(2).build();
@@ -50,9 +50,9 @@ public class CategoryItemRestControllerTest extends RestControllerTestBase {
         CategoryItem categoryItem5 = new CategoryItemBuilder(5, category2).build();
         CategoryItem categoryItem6 = new CategoryItemBuilder(6, category2).build();
 
-        given(categoryItemDao.getAllByCategoryId(2, validToken))
+        given(categoryItemService.getAllByCategoryId(2, validToken))
                 .willReturn(Arrays.asList(categoryItem4, categoryItem5, categoryItem6));
-        given(categoryItemDao.getAllByCategoryId(3, validToken)).willReturn(new ArrayList<>());
+        given(categoryItemService.getAllByCategoryId(3, validToken)).willReturn(new ArrayList<>());
     }
 
     @Test
