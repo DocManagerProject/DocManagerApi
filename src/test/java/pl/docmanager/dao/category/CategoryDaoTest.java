@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit4.SpringRunner;
-import pl.docmanager.dao.DaoTestBase;
 import pl.docmanager.dao.exception.EntityValidationException;
 import pl.docmanager.domain.CategoryBuilder;
 import pl.docmanager.domain.SolutionBuilder;
@@ -31,7 +30,7 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class CategoryDaoTest extends DaoTestBase {
+public class CategoryDaoTest {
 
     @Autowired
     private CategoryDao categoryDao;
@@ -47,7 +46,6 @@ public class CategoryDaoTest extends DaoTestBase {
 
     @Before
     public void setup() {
-        super.setup();
         Solution solution = new SolutionBuilder(1).build();
         User author = new UserBuilder(99, solution).build();
         category1 = new CategoryBuilder(1, solution)

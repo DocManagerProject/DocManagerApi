@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
-import pl.docmanager.dao.DaoTestBase;
 import pl.docmanager.domain.SettingsBuilder;
 import pl.docmanager.domain.SolutionBuilder;
 import pl.docmanager.domain.global.Settings;
@@ -21,7 +20,7 @@ import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class SettingsDaoTest extends DaoTestBase {
+public class SettingsDaoTest {
 
     @Autowired
     private SettingsDao settingsDao;
@@ -34,7 +33,6 @@ public class SettingsDaoTest extends DaoTestBase {
 
     @Before
     public void setup() {
-        super.setup();
 
         Solution solution1 = new SolutionBuilder(1).build();
         settings1 = new SettingsBuilder(1, solution1)

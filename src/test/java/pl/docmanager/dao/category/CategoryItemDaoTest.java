@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
-import pl.docmanager.dao.DaoTestBase;
 import pl.docmanager.domain.CategoryBuilder;
 import pl.docmanager.domain.CategoryItemBuilder;
 import pl.docmanager.domain.SolutionBuilder;
@@ -18,7 +17,6 @@ import pl.docmanager.domain.solution.Solution;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.Assert.assertTrue;
@@ -26,7 +24,7 @@ import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class CategoryItemDaoTest extends DaoTestBase {
+public class CategoryItemDaoTest {
 
     @Autowired
     private CategoryItemDao categoryItemDao;
@@ -45,7 +43,6 @@ public class CategoryItemDaoTest extends DaoTestBase {
 
     @Before
     public void setup() {
-        super.setup();
         Solution solution1 = new SolutionBuilder(1).build();
         Category category1 = new CategoryBuilder(1, solution1).withName("exampleCategory").build();
         categoryItem1 = new CategoryItemBuilder(1, category1).build();

@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit4.SpringRunner;
-import pl.docmanager.dao.DaoTestBase;
 import pl.docmanager.dao.exception.EntityValidationException;
 import pl.docmanager.domain.PageBuilder;
 import pl.docmanager.domain.SolutionBuilder;
@@ -31,7 +30,7 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class PageDaoTest extends DaoTestBase {
+public class PageDaoTest {
 
     @Autowired
     private PageDao pageDao;
@@ -47,7 +46,6 @@ public class PageDaoTest extends DaoTestBase {
 
     @Before
     public void setup() {
-        super.setup();
         Solution solution = new SolutionBuilder(1).build();
         User author = new UserBuilder(99, solution).build();
         page1 = new PageBuilder(1, solution)
