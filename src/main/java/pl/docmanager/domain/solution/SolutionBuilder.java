@@ -1,7 +1,4 @@
-package pl.docmanager.domain;
-
-import pl.docmanager.domain.solution.Solution;
-import pl.docmanager.domain.solution.SolutionState;
+package pl.docmanager.domain.solution;
 
 import java.time.LocalDateTime;
 

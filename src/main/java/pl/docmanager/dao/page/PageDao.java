@@ -2,20 +2,29 @@ package pl.docmanager.dao.page;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.docmanager.dao.category.CategoryItemDao;
+import pl.docmanager.domain.category.CategoryBuilder;
+import pl.docmanager.domain.category.CategoryItem;
+import pl.docmanager.domain.category.CategoryItemBuilder;
+import pl.docmanager.domain.category.CategoryItemContentType;
 import pl.docmanager.domain.page.Page;
 
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class PageDao {
     private PageRepository pageRepository;
     private PageValidator pageValidator;
+    private CategoryItemDao categoryItemDao;
 
     @Autowired
-    public PageDao(PageRepository pageRepository, PageValidator pageValidator) {
+    public PageDao(PageRepository pageRepository, PageValidator pageValidator, CategoryItemDao categoryItemDao) {
         this.pageRepository = pageRepository;
         this.pageValidator = pageValidator;
+        this.categoryItemDao = categoryItemDao;
     }
 
     public Page getPageByUrl(String url, long solutionId) {
@@ -44,5 +53,25 @@ public class PageDao {
         }
 
         return pageRepository.save(existingPage);
+    }
+
+    public void addPageToCategories(Page page, List<Long> categoriesIds) {
+        List<CategoryItem> currentCategoryItems = categoryItemDao.getAllByContentPageId(page.getId());
+        List<Long> currentCategoryItemsCategoryIds = currentCategoryItems.stream()
+                .map(x -> x.getCategory().getId())
+                .collect(Collectors.toList());
+        List<CategoryItem> toRemove = currentCategoryItems.stream()
+                .filter(x -> !categoriesIds.contains(x.getCategory().getId()))
+                .collect(Collectors.toList());
+        List<CategoryItem> toAdd = categoriesIds.stream()
+                .filter(x -> !currentCategoryItemsCategoryIds.contains(x))
+                .map(x -> new CategoryItemBuilder(0, new CategoryBuilder(x, null).build())
+                            .withContentType(CategoryItemContentType.PAGE)
+                            .withContentPage(page)
+                            .withIndex(0) // TODO: change it
+                            .build()
+                ).collect(Collectors.toList());
+        categoryItemDao.removeAll(toRemove);
+        categoryItemDao.addAll(toAdd);
     }
 }

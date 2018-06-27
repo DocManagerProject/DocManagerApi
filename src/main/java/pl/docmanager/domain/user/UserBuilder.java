@@ -1,9 +1,6 @@
-package pl.docmanager.domain;
+package pl.docmanager.domain.user;
 
 import pl.docmanager.domain.solution.Solution;
-import pl.docmanager.domain.user.User;
-import pl.docmanager.domain.user.UserState;
-import pl.docmanager.domain.user.UserType;
 
 import java.time.LocalDateTime;
 

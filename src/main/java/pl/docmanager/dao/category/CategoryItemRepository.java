@@ -5,4 +5,5 @@ import pl.docmanager.domain.category.CategoryItem;
 
 public interface CategoryItemRepository extends CrudRepository<CategoryItem, Long> {
     Iterable<CategoryItem> findAllByCategory_Id(long categoryId);
+    Iterable<CategoryItem> findAllByContentPage_Id(long contentPageId);
 }

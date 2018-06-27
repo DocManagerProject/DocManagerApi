@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
-import pl.docmanager.domain.SettingsBuilder;
-import pl.docmanager.domain.SolutionBuilder;
+import pl.docmanager.domain.global.SettingsBuilder;
+import pl.docmanager.domain.solution.SolutionBuilder;
 import pl.docmanager.domain.global.Settings;
 import pl.docmanager.domain.solution.Solution;
 

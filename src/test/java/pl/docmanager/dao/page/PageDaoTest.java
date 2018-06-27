@@ -9,15 +9,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit4.SpringRunner;
+import pl.docmanager.dao.category.CategoryItemDao;
 import pl.docmanager.dao.exception.EntityValidationException;
-import pl.docmanager.domain.page.PageBuilder;
-import pl.docmanager.domain.solution.SolutionBuilder;
-import pl.docmanager.domain.user.UserBuilder;
 import pl.docmanager.domain.page.Page;
+import pl.docmanager.domain.page.PageBuilder;
 import pl.docmanager.domain.solution.Solution;
+import pl.docmanager.domain.solution.SolutionBuilder;
 import pl.docmanager.domain.user.User;
+import pl.docmanager.domain.user.UserBuilder;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -37,6 +40,8 @@ public class PageDaoTest {
 
     @MockBean
     private PageRepository pageRepository;
+    @MockBean
+    private CategoryItemDao categoryItemDao;
 
     @SpyBean
     private PageValidator pageValidator;
@@ -170,5 +175,14 @@ public class PageDaoTest {
         Solution solution = new SolutionBuilder(1).build();
         Map<String, Object> updatesMap = Maps.newHashMap("solution", new UserBuilder(5, solution).build());
         pageDao.updatePage(updatesMap, "example_page", 1);
+    }
+
+    @Test
+    public void addPageToCategoriesTestValid() {
+        Page page = new PageBuilder(1, new Solution()).build();
+        List<Long> ids = Arrays.asList(2L, 4L, 1L, 5L);
+        pageDao.addPageToCategories(page, ids);
+        verify(categoryItemDao, times(1)).removeAll(any());
+        verify(categoryItemDao, times(1)).addAll(any());
     }
 }

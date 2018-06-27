@@ -1,6 +1,5 @@
-package pl.docmanager.domain;
+package pl.docmanager.domain.global;
 
-import pl.docmanager.domain.global.Settings;
 import pl.docmanager.domain.solution.Solution;
 
 public class SettingsBuilder {
