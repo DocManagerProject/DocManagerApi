@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import pl.docmanager.domain.page.Page;
+import pl.docmanager.domain.page.wrapper.PageWithCategories;
 import pl.docmanager.web.service.page.PageService;
 
 import java.util.Map;
@@ -31,8 +32,8 @@ public class PageRestController extends RestControllerBase {
     }
 
     @PostMapping("/api/pages")
-    public void addPage(@RequestBody Page page, @RequestHeader("apiToken") String apiToken) {
-        pageService.addPage(page, apiToken);
+    public void addPage(@RequestBody PageWithCategories pageWithCategories, @RequestHeader("apiToken") String apiToken) {
+        pageService.addPage(pageWithCategories, apiToken);
     }
 
     @PatchMapping("/api/pages/solution/{solutionId}/url/{url}")

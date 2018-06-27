@@ -31,9 +31,9 @@ public class PageDao {
         return pageRepository.findBySolution_IdAndUrl(solutionId, url).orElseThrow(NoSuchElementException::new);
     }
 
-    public void addPage(Page page) {
+    public Page addPage(Page page) {
         pageValidator.validatePage(page);
-        pageRepository.save(page);
+        return pageRepository.save(page);
     }
 
     public Page updatePage(Map<String, Object> updatesMap, String url, long solutionId) {
@@ -56,6 +56,14 @@ public class PageDao {
     }
 
     public void addPageToCategories(Page page, List<Long> categoriesIds) {
+        if (page == null) {
+            throw new IllegalArgumentException("Page cannot be null");
+        }
+
+        if (categoriesIds == null) {
+            throw new IllegalArgumentException("CategoriesIDs cannot be null");
+        }
+
         List<CategoryItem> currentCategoryItems = categoryItemDao.getAllByContentPageId(page.getId());
         List<Long> currentCategoryItemsCategoryIds = currentCategoryItems.stream()
                 .map(x -> x.getCategory().getId())

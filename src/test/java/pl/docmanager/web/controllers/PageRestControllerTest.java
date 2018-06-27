@@ -70,16 +70,19 @@ public class PageRestControllerTest extends RestControllerTestBase {
         mvc.perform(post("/api/pages")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ " +
-                        "   \"name\": \"page\", " +
-                        "   \"content\": \"pageContent\", " +
-                        "   \"solution\": { " +
-                        "      \"id\": 1 " +
+                        "   \"page\" : {" +
+                        "       \"name\": \"page\", " +
+                        "       \"content\": \"pageContent\", " +
+                        "       \"solution\": { " +
+                        "           \"id\": 1 " +
+                        "       }, " +
+                        "       \"author\": { " +
+                        "           \"id\": 1" +
+                        "       }," +
+                        "       \"url\": \"url\"" +
                         "   }, " +
-                        "   \"author\": { " +
-                        "       \"id\": 1" +
-                        "   }," +
-                        "   \"url\": \"url\"" +
-                        " }")
+                        "   \"categories\": [1, 2, 3] " +
+                        "} ")
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8")
                 .header("apiToken", validToken))

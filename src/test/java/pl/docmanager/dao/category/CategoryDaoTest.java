@@ -18,6 +18,8 @@ import pl.docmanager.domain.solution.Solution;
 import pl.docmanager.domain.user.User;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -67,6 +69,13 @@ public class CategoryDaoTest {
 
         given(categoryRepository.findBySolution_IdAndUrl(2, "example_category")).willReturn(Optional.of(category2));
         given(categoryRepository.findById(2L)).willReturn(Optional.of(category2));
+        given(categoryRepository.findAllById(Arrays.asList(1L, 2L))).willReturn(Arrays.asList(category1, category2));
+    }
+
+    @Test
+    public void getAllCategoriesByIdsTestValid() {
+        List<Long> ids = Arrays.asList(1L, 2L);
+        assertEquals(2, categoryDao.getAllCategoriesByIds(ids).size());
     }
 
     @Test

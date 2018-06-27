@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.docmanager.domain.category.Category;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -17,6 +19,12 @@ public class CategoryDao {
     public CategoryDao(CategoryRepository categoryRepository, CategoryValidator categoryValidator) {
         this.categoryRepository = categoryRepository;
         this.categoryValidator = categoryValidator;
+    }
+
+    public List<Category> getAllCategoriesByIds(List<Long> ids) {
+        List<Category> ret = new ArrayList<>();
+        categoryRepository.findAllById(ids).forEach(ret::add);
+        return ret;
     }
 
     public Category getCategoryById(long id) {

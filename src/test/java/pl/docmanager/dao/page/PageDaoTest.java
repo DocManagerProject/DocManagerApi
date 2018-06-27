@@ -185,4 +185,16 @@ public class PageDaoTest {
         verify(categoryItemDao, times(1)).removeAll(any());
         verify(categoryItemDao, times(1)).addAll(any());
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void addPageToCategoriesTestNullPage() {
+        List<Long> ids = Arrays.asList(2L, 4L, 1L, 5L);
+        pageDao.addPageToCategories(null, ids);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void addPageToCategoriesTestNullCategoriesIds() {
+        Page page = new PageBuilder(1, new Solution()).build();
+        pageDao.addPageToCategories(page, null);
+    }
 }

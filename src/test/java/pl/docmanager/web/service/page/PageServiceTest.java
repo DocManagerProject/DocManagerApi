@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.docmanager.dao.page.PageDao;
 import pl.docmanager.domain.page.PageBuilder;
+import pl.docmanager.domain.page.wrapper.PageWithCategories;
 import pl.docmanager.domain.solution.SolutionBuilder;
 import pl.docmanager.domain.user.UserBuilder;
 import pl.docmanager.domain.page.Page;
@@ -19,9 +20,14 @@ import pl.docmanager.web.security.AccessValidationException;
 import pl.docmanager.web.security.JwtTokenGenerator;
 import pl.docmanager.web.service.ServiceTestBase;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -75,8 +81,24 @@ public class PageServiceTest extends ServiceTestBase {
                 .withContent("exampleContent")
                 .withAutor(new UserBuilder(1, solution).build())
                 .withUrl("url").build();
-        pageService.addPage(page, validToken);
+        List<Long> categoriesIds = Arrays.asList(1L, 2L, 3L);
+        pageService.addPage(new PageWithCategories(page, categoriesIds), validToken);
         verify(pageDao, times(1)).addPage(page);
+        verify(pageDao, times(1)).addPageToCategories(any(), eq(categoriesIds));
+    }
+
+    @Test
+    public void addPageTestValidEmptyCategories() {
+        Solution solution = new SolutionBuilder(1).build();
+        Page page = new PageBuilder(0, solution)
+                .withName("page")
+                .withContent("exampleContent")
+                .withAutor(new UserBuilder(1, solution).build())
+                .withUrl("url").build();
+        List<Long> categoriesIds = new ArrayList<>();
+        pageService.addPage(new PageWithCategories(page, categoriesIds), validToken);
+        verify(pageDao, times(1)).addPage(page);
+        verify(pageDao, times(1)).addPageToCategories(any(), eq(categoriesIds));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -87,7 +109,25 @@ public class PageServiceTest extends ServiceTestBase {
                 .withContent("exampleContent")
                 .withAutor(new UserBuilder(1, solution).build())
                 .withUrl("url").build();
-        pageService.addPage(page, validToken);
+        List<Long> categoriesIds = Arrays.asList(1L, 2L, 3L);
+        pageService.addPage(new PageWithCategories(page, categoriesIds), validToken);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void addPageTestNullPage() {
+        List<Long> categoriesIds = Arrays.asList(1L, 2L, 3L);
+        pageService.addPage(new PageWithCategories(null, categoriesIds), validToken);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void addPageTestNullCategoriesIds() {
+        Solution solution = new SolutionBuilder(1).build();
+        Page page = new PageBuilder(0, null)
+                .withName("page")
+                .withContent("exampleContent")
+                .withAutor(new UserBuilder(1, solution).build())
+                .withUrl("url").build();
+        pageService.addPage(new PageWithCategories(page, null), validToken);
     }
 
     @Test(expected = AccessValidationException.class)
@@ -99,7 +139,8 @@ public class PageServiceTest extends ServiceTestBase {
                 .withContent("exampleContent")
                 .withAutor(new UserBuilder(1, solution1).build())
                 .withUrl("url").build();
-        pageService.addPage(page, validToken);
+        List<Long> categoriesIds = Arrays.asList(1L, 2L, 3L);
+        pageService.addPage(new PageWithCategories(page, categoriesIds), validToken);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -110,7 +151,8 @@ public class PageServiceTest extends ServiceTestBase {
                 .withContent("exampleContent")
                 .withAutor(new UserBuilder(1, solution).build())
                 .withUrl("url").build();
-        pageService.addPage(page, null);
+        List<Long> categoriesIds = Arrays.asList(1L, 2L, 3L);
+        pageService.addPage(new PageWithCategories(page, categoriesIds), null);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -121,7 +163,8 @@ public class PageServiceTest extends ServiceTestBase {
                 .withContent("exampleContent")
                 .withAutor(new UserBuilder(1, solution).build())
                 .withUrl("url").build();
-        pageService.addPage(page, "");
+        List<Long> categoriesIds = Arrays.asList(1L, 2L, 3L);
+        pageService.addPage(new PageWithCategories(page, categoriesIds), "");
     }
 
     @Test(expected = SignatureException.class)
@@ -133,7 +176,8 @@ public class PageServiceTest extends ServiceTestBase {
                 .withContent("exampleContent")
                 .withAutor(new UserBuilder(1, solution).build())
                 .withUrl("url").build();
-        pageService.addPage(page, invalidToken);
+        List<Long> categoriesIds = Arrays.asList(1L, 2L, 3L);
+        pageService.addPage(new PageWithCategories(page, categoriesIds), invalidToken);
     }
 
     @Test
