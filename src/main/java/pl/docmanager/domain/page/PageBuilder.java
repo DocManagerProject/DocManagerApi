@@ -1,7 +1,5 @@
-package pl.docmanager.domain;
+package pl.docmanager.domain.page;
 
-import pl.docmanager.domain.page.Page;
-import pl.docmanager.domain.page.PageState;
 import pl.docmanager.domain.solution.Solution;
 import pl.docmanager.domain.user.User;
 

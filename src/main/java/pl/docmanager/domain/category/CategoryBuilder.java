@@ -1,7 +1,5 @@
-package pl.docmanager.domain;
+package pl.docmanager.domain.category;
 
-import pl.docmanager.domain.category.Category;
-import pl.docmanager.domain.category.CategoryState;
 import pl.docmanager.domain.solution.Solution;
 import pl.docmanager.domain.user.User;
 

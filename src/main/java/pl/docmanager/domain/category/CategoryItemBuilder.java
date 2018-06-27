@@ -1,9 +1,5 @@
-package pl.docmanager.domain;
+package pl.docmanager.domain.category;
 
-import pl.docmanager.domain.category.Category;
-import pl.docmanager.domain.category.CategoryItem;
-import pl.docmanager.domain.category.CategoryItemContentType;
-import pl.docmanager.domain.category.CategoryItemState;
 import pl.docmanager.domain.page.Page;
 
 public class CategoryItemBuilder {
